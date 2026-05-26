@@ -58,6 +58,25 @@
             box-shadow: 0 4px 20px rgba(0, 194, 232, 0.12);
         }
         
+        /* Rigid CSS Sticky Implementations - Bypasses any browser conflicts */
+        .sticky-header {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .sticky-filters {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 64px; /* Mobile Header Height */
+            z-index: 90;
+        }
+        @media (min-width: 768px) {
+            .sticky-filters {
+                top: 80px; /* Desktop Header Height */
+            }
+        }
+        
         /* Stabilizing Maps on Mobile & Prevent Viewport Shrinking */
         #desktopMap, #mobileMap {
             touch-action: pan-x pan-y !important;
@@ -105,13 +124,13 @@
     <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- Top Alert Bar -->
-    <div class="bg-brand-500 text-white text-center py-2 px-4 text-xs md:text-sm font-bold relative z-50 flex items-center justify-center gap-2 shadow-sm">
+    <div class="bg-brand-500 text-white text-center py-2 px-4 text-xs md:text-sm font-bold relative z-[110] flex items-center justify-center gap-2 shadow-sm">
         <i class="fa-solid fa-certificate text-white animate-spin" style="animation-duration: 4s;"></i>
         <span>כל המסעדות כשרות למהדרין / כשרות וסגורות בשבת כהלכה! 🍷</span>
     </div>
 
     <!-- Header Area -->
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 z-40 shadow-sm" id="mainHeader">
+    <header class="sticky-header bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm" id="mainHeader">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
             
             <!-- Logo -->
@@ -160,7 +179,7 @@
                 <!-- Favorites Badge Button (Desktop) -->
                 <button onclick="toggleFavoritesPanel(true)" class="relative p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 transition-colors" title="מועדפים">
                     <i class="fa-solid fa-heart text-base md:text-lg"></i>
-                    <span id="favoritesBadge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-600 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                    <span id="favoritesBadge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white leading-none aspect-square">0</span>
                 </button>
             </div>
         </div>
@@ -255,10 +274,10 @@
         <div class="flex gap-3 overflow-x-auto pb-3 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" id="categoryCarousel"></div>
     </section>
 
-    <!-- Filter Quick Chips sticky bar (Stacked perfectly under header) -->
-    <section class="bg-white border-y border-slate-100 sticky top-16 md:top-20 z-30 shadow-sm py-2.5">
+    <!-- Filter Quick Chips sticky bar -->
+    <section class="bg-white border-y border-slate-100 sticky-filters shadow-sm py-2.5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-3 overflow-x-auto no-scrollbar">
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 max-w-full w-full whitespace-nowrap">
                 
                 <button onclick="toggleFilterChip('mehadrinOnly')" id="chip-mehadrinOnly" 
                         class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold transition-all border border-slate-200 text-slate-700 bg-white hover:bg-slate-50">
@@ -336,12 +355,11 @@
             </h2>
             <span class="text-xs text-slate-500 font-bold">לחצו על הסיכות לקבלת מידע מהיר</span>
         </div>
-        <!-- Google Map Container (Desktop) -->
         <div id="desktopMap" class="w-full h-[400px] rounded-3xl shadow-md border border-slate-200 relative overflow-hidden z-10"></div>
     </section>
 
     <!-- Mobile Navigation Tab Bar (Wolt Footer Navigation) -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 h-16 z-40 flex items-center justify-around px-2 shadow-lg">
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-150 h-16 z-40 flex items-center justify-around px-2 shadow-lg">
         <button onclick="switchMobileTab('search')" id="tab-search" class="flex flex-col items-center justify-center gap-1 text-brand-500 flex-1 py-1">
             <i class="fa-solid fa-magnifying-glass text-lg"></i>
             <span class="text-[10px] font-black">חיפוש</span>
@@ -350,10 +368,14 @@
             <i class="fa-solid fa-map-location-dot text-lg"></i>
             <span class="text-[10px] font-bold">המפה</span>
         </button>
+        
+        <!-- Mobile Favorites Button with fixed circular badge wrapper to prevent layout pill-distortion -->
         <button onclick="toggleFavoritesPanel(true)" class="flex flex-col items-center justify-center gap-1 text-slate-400 flex-1 py-1 relative">
-            <i class="fa-solid fa-heart text-lg"></i>
+            <div class="relative inline-block">
+                <i class="fa-solid fa-heart text-lg"></i>
+                <span id="mobileFavsBadge" class="hidden absolute -top-2 -right-2.5 bg-rose-600 text-white font-black text-[9px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white leading-none aspect-square">0</span>
+            </div>
             <span class="text-[10px] font-bold">מועדפים</span>
-            <span id="mobileFavsBadge" class="hidden absolute top-0.5 right-6 bg-rose-600 text-white text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center">0</span>
         </button>
     </div>
 
@@ -370,7 +392,6 @@
                 <span>מיקום</span>
             </button>
         </div>
-        <!-- Google Map Container (Mobile) -->
         <div id="mobileMap" class="flex-1 w-full h-full relative z-10"></div>
     </div>
 
@@ -389,7 +410,7 @@
             </button>
         </div>
 
-        <div class="max-w-4xl mx-auto w-full flex-1 flex flex-col">
+        <div class="max-w-4xl mx-auto w-full flex-1 flex flex-col pb-10">
             <!-- Image Gallery Banner -->
             <div class="h-64 sm:h-96 bg-slate-900 relative shrink-0 group overflow-hidden">
                 <img id="modalMainImage" src="" alt="" class="w-full h-full object-cover transition-all duration-300 cursor-pointer" onclick="nextSliderImage()" title="לחצו להחלפת תמונה">
@@ -403,7 +424,7 @@
                     <i class="fa-solid fa-chevron-right text-lg"></i>
                 </button>
                 
-                <div id="modalSliderDots" class="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
+                <div id="modalSliderDots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
                 
                 <!-- Bottom Header Badge Overlay -->
                 <div class="absolute bottom-4 right-4 text-white left-4 flex flex-col gap-1.5 text-right pointer-events-none">
@@ -469,12 +490,6 @@
                     </button>
                 </div>
 
-                <!-- Description Block -->
-                <div>
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-1.5">על המקום</h4>
-                    <p id="modalDescription" class="text-sm text-slate-600 leading-relaxed font-medium"></p>
-                </div>
-
                 <!-- Information list cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600">
                     <div class="space-y-1">
@@ -487,31 +502,32 @@
                     </div>
                 </div>
 
-                <!-- Interactive Gallery Grid -->
-                <div>
-                    <h4 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
+                <!-- Interactive Gallery Grid (Highly visible swap interface) -->
+                <div class="border-y border-slate-100 py-6">
+                    <h4 class="text-sm font-black text-slate-950 border-b border-slate-150 pb-2 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-images wolt-text-cyan"></i>
                         <span>גלריית תמונות מהמקום (לחצו להחלפה)</span>
                     </h4>
                     <div id="modalGalleryContainer" class="grid grid-cols-3 gap-2"></div>
                 </div>
 
+                <!-- Interactive Review Stack with Enhanced UX spacing -->
+                <div class="space-y-4">
+                    <h4 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-comments wolt-text-cyan"></i>
+                        <span>חוות דעת של מבקרים</span>
+                    </h4>
+                    <!-- Updated reviews container with clean grid vertical layout -->
+                    <div id="modalReviewsContainer" class="flex flex-col gap-6"></div>
+                </div>
+
                 <!-- Related Places Section -->
-                <div class="border-t border-slate-100 pt-6">
+                <div>
                     <h4 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-utensils wolt-text-cyan"></i>
                         <span>עוד מסעדות קשורות באזור</span>
                     </h4>
                     <div id="relatedPlacesContainer" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth"></div>
-                </div>
-
-                <!-- Interactive Review Stack -->
-                <div>
-                    <h4 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-comments wolt-text-cyan"></i>
-                        <span>חוות דעת של מבקרים</span>
-                    </h4>
-                    <div id="modalReviewsContainer" class="space-y-3"></div>
                 </div>
 
             </div>
@@ -541,16 +557,25 @@
         const SHEETDB_API_URL = "https://sheetdb.io/api/v1/qp7i448yfxl6g"; 
 
         let placesDatabase = [];
-        
-        // Robust favorites parsing to avoid counter bugs
         let favorites = [];
-        try {
-            const rawFavs = localStorage.getItem('kosher_favorites');
-            favorites = rawFavs ? JSON.parse(rawFavs) : [];
-            if (!Array.isArray(favorites)) favorites = [];
-            favorites = [...new Set(favorites)].filter(id => id && typeof id === 'string');
-        } catch (e) {
-            favorites = [];
+
+        // Dynamic Sanitizer to avoid non-existent or duplicate favorites offsetting numbers
+        function sanitizeFavorites() {
+            try {
+                const rawFavs = localStorage.getItem('kosher_favorites');
+                let parsed = rawFavs ? JSON.parse(rawFavs) : [];
+                if (!Array.isArray(parsed)) parsed = [];
+                
+                // Keep only valid IDs that actually exist in the currently loaded placesDatabase!
+                favorites = [...new Set(parsed)].filter(id => 
+                    id && typeof id === 'string' && placesDatabase.some(p => p.id === id)
+                );
+                
+                localStorage.setItem('kosher_favorites', JSON.stringify(favorites));
+            } catch (e) {
+                favorites = [];
+            }
+            updateFavoritesBadge();
         }
 
         let activeCategory = 'all';
@@ -599,7 +624,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetchPlaces();
             renderCategoryCarousel();
-            updateFavoritesBadge();
         });
 
         // Generate coordinates for distance calculation and map placing based on city
@@ -617,6 +641,7 @@
             };
         }
 
+        // Real-time Activity Solver (Calculates open status strictly considering Sabbath)
         function getOpenStatus(hoursStr) {
             const now = new Date();
             const day = now.getDay(); // 0 is Sunday, 5 is Friday, 6 is Saturday
@@ -685,7 +710,6 @@
                         image: item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
                         kosher: item.kosher || 'כשר למהדרין',
                         reviews: item.reviews || 'מקום מצוין, שירות אדיב ואוכל טעים מאוד!|הגענו בערב והיה פשוט מושלם, נחזור בטוח.',
-                        // Pre-calculate custom coordinates for rendering distance & map correctly
                         coords: generateRealisticCoords({ city: placeCity }, index),
                         gallery: [
                             item.image,
@@ -695,11 +719,10 @@
                     };
                 });
 
+                sanitizeFavorites();
                 renderPlaces();
                 updateWeeklyFeatured();
                 initMaps();
-                
-                // Active precise address geocoding to resolve exact map pins positioning
                 resolveCoordinatesForPlaces();
                 
             } catch (error) {
@@ -724,10 +747,11 @@
             const mockData = [
                 { id: 'mock-1', name: 'סטקיית העיר טירת כרמל', city: 'טירת כרמל', address: 'משה שרת 4, טירת כרמל', category: 'מסעדה', phone: '04-8576433', description: 'חווית בשרים אותנטית עם הבשרים הכי איכותיים בצפון, סלטים טריים הנעשים במקום יום יום ושירות מהלב.', hours: 'ימים א\'-ה\': 11:30 - 23:00, ו\': 11:30 - 15:30, ש\': סגור', rating: 4.8, user_ratings_total: 421, milk_meat: 'בשרי 🥩', website: 'https://waze.com/ul?q=משה+שרת+4+טירת+כרמל', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'בשר איכותי מאוד!|הסלטים הכי טעימים שיש|שירות פשוט מהיר ומפנק', coords: { lat: 32.7610, lng: 34.9702 }, gallery: ['https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'] },
                 { id: 'mock-2', name: 'קפה ביער - עגלת קפה פסטורלית', city: 'השרון', address: 'יער קדימה, השרון', category: 'עגלת קפה', phone: '052-8765431', description: 'במרכז היער הפסטורלי של קדימה שוכנת עגלת קפה קסומה המציעה מאפים טריים, כריכים עשירים, קפה איכותי ואווירה משפחתית רגועה בטבע.', hours: 'ימים א\'-ה\': 07:30 - 17:00, ו\': 07:30 - 15:00, ש\': סגור', rating: 4.9, user_ratings_total: 180, milk_meat: 'חלבי 🧀', website: 'https://waze.com/ul?q=יער+קדימה', image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'פינה קסומה ביער|מאפי שמרים מעולם אחר|כיף גדול לילדים', coords: { lat: 32.2844, lng: 34.8908 }, gallery: ['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1447078806655-40579c2520d6?auto=format&fit=crop&w=800&q=80'] },
-                { id: 'mock-3', name: 'בורגר בר ירושלים', city: 'ירושלים', address: 'שמאי 8, ירושלים', category: 'מסעדה', phone: '02-6234551', description: 'המבורגרים פרימיום מבשר אנגוס טרי, קציצות עסיסיות בייצור עצמי ומגוון רטבים מיוחדים בלב הבירה.', hours: 'ימים א\'-ה\': 12:00 - 01:00, ו\': סגור, מוצ"ש: שעה לאחר צאת שבת עד 02:00', rating: 4.6, user_ratings_total: 310, milk_meat: 'בשרי 🥩', website: 'https://waze.com/ul?q=שמאי+8+ירושלים', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80', kosher: 'בד״ץ בית יוסף', reviews: 'המבורגר מעולה וטעים|הצ׳יפס הגיע חם ופריך|שירות פגז', coords: { lat: 31.7801, lng: 35.2190 }, gallery: ['https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'] },
+                { id: 'mock-3', name: 'בורגר בר ירושלים', city: 'ירושלים', address: 'שמאי 8, ירושלים', category: 'מסעדה', phone: '02-6234551', description: 'המבורגרים פרימיום מבשר אנגוס טרי, קציצות עסיסיות בייצור עצמי ומגוון רטבים מיוחדים בלב הבירה.', hours: 'ימים א\'-ה\': 12:00 - 01:00, ו\': סגור, מוצש: שעה לאחר צאת שבת עד 02:00', rating: 4.6, user_ratings_total: 310, milk_meat: 'בשרי 🥩', website: 'https://waze.com/ul?q=שמאי+8+ירושלים', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80', kosher: 'בד״ץ בית יוסף', reviews: 'המבורגר מעולה וטעים|הצ׳יפס הגיע חם ופריך|שירות פגז', coords: { lat: 31.7801, lng: 35.2190 }, gallery: ['https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'] },
                 { id: 'mock-4', name: 'ביסטרו קפה רושש', city: 'מרכז', address: 'רוטשילד 32, תל אביב', category: 'בית קפה', phone: '03-5123456', description: 'בית קפה וביסטרו איטלקי חלבי משובח. פסטות בעבודת יד, דגים טריים, וקינוחים מטורפים מול השדרה היפה בתל אביב.', hours: 'ימים א\'-ה\': 08:00 - 23:00, ו\': 08:00 - 14:30, ש\': סגור', rating: 4.7, user_ratings_total: 512, milk_meat: 'חלבי 🧀', website: 'https://waze.com/ul?q=רוטשילד+32+תל+אביב', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80', kosher: 'כשר', reviews: 'פסטה כמהין הכי טובה שאכלתי|אווירה תל אביבית קלאסית|קינוחים מושקעים ברמות', coords: { lat: 32.0620, lng: 34.7730 }, gallery: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80'] }
             ];
             placesDatabase = mockData;
+            sanitizeFavorites();
             renderPlaces();
             updateWeeklyFeatured();
             initMaps();
@@ -883,10 +907,10 @@
                     console.warn(`Could not resolve location for ${place.name} (${place.address}) - Fallback used. Error: ${err}`);
                 }
                 
-                // Throttle requests slightly
                 await new Promise(r => setTimeout(r, 100));
             }
             
+            sanitizeFavorites(); // Re-sanitize to ensure perfect sync
             renderPlaces();
         }
 
@@ -921,7 +945,6 @@
                     renderPlaces();
                     showToast("📍 המיקום שלך אותר! מציג מקומות קרובים אלייך.", "success");
                     
-                    // Center maps on user coords with deep zoom (Wolt style)
                     if (desktopMapInstance) {
                         desktopMapInstance.setCenter(userCoords);
                         desktopMapInstance.setZoom(14);
@@ -972,7 +995,7 @@
                     if (!matchName && !matchDesc && !matchAddr && !matchCity && !matchCategory) return false;
                 }
 
-                if (filters.mehadrinOnly && !place.kosher.includes('מהדרין') && !place.kosher.includes('בית יוס|בית יוסף')) return false;
+                if (filters.mehadrinOnly && !place.kosher.includes('מהדרין') && !place.kosher.includes('בית יוסף')) return false;
                 if (filters.meatOnly && !place.milk_meat.includes('בשרי')) return false;
                 if (filters.dairyOnly && !place.milk_meat.includes('חלבי')) return false;
                 
@@ -1032,6 +1055,10 @@
                 if (place.rating >= 4.8) ratingLabel = 'מעולה';
                 else if (place.rating >= 4.5) ratingLabel = 'טוב מאוד';
 
+                // Robust regex review parser helper for clean presentation
+                const parsedReviews = parseReviewText(place.reviews);
+                const featuredText = parsedReviews[0] ? parsedReviews[0].text : "מקום מצוין, שירות אדיב ואוכל טעים מאוד!";
+
                 card.innerHTML = `
                     <div class="h-44 w-full bg-slate-100 relative overflow-hidden">
                         <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover">
@@ -1076,7 +1103,10 @@
                                 <span>${place.address}</span>
                             </p>
                             
-                            <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">${place.description}</p>
+                            <div class="bg-slate-50 border border-slate-100/60 p-2.5 rounded-xl text-right mt-2 text-[11px] text-slate-600 relative">
+                                <span class="block text-[8px] uppercase tracking-wider font-extrabold text-slate-400 mb-1">חוות דעת נבחרת ⭐</span>
+                                <p class="line-clamp-2 leading-relaxed font-semibold italic">"${featuredText}"</p>
+                            </div>
                         </div>
 
                         <div class="flex flex-wrap gap-1">
@@ -1113,6 +1143,76 @@
             }
         }
 
+        // Advanced Regex Review Parser - Decodes complex database strings (e.g. from SheetDB) into beautiful objects
+        function parseReviewText(rawReviews) {
+            if (!rawReviews || typeof rawReviews !== 'string') return [];
+            
+            // Split strictly by either ' --- ' or '|' to support both database formats
+            let parts = rawReviews.split(/ --- |\|/);
+            let parsedList = [];
+            
+            parts.forEach((part, index) => {
+                let trimmed = part.trim();
+                if (!trimmed) return;
+                
+                // Clean formatting metadata
+                trimmed = trimmed.replace(/^---?\s*/, '').trim();
+                
+                let starRating = 5; 
+                let author = `מבקר אנונימי`;
+                let reviewText = trimmed;
+                
+                // Extremely powerful regex patterns matching various bracket, star and emoji formats
+                let matchA = trimmed.match(/^\[\s*([\d\s⭐★]+)\s*\]\s*([^:]+):\s*(.*)$/s);
+                let matchB = trimmed.match(/^([^[:[#-]+)\s*\[\s*([\d\s⭐★]+)\s*\]\s*:\s*(.*)$/s);
+                let matchC = trimmed.match(/^([^[:[#-]+)\s*\[\s*([\d\s⭐★]+)\s*\]\s*---\s*(.*)$/s);
+                
+                if (matchA) {
+                    starRating = extractDigits(matchA[1]);
+                    author = matchA[2].trim();
+                    reviewText = matchA[3].trim();
+                } else if (matchB) {
+                    author = matchB[1].trim();
+                    starRating = extractDigits(matchB[2]);
+                    reviewText = matchB[3].trim();
+                } else if (matchC) {
+                    author = matchC[1].trim();
+                    starRating = extractDigits(matchC[2]);
+                    reviewText = matchC[3].trim();
+                } else {
+                    // Try simple check for inline stars
+                    let inlineStarMatch = trimmed.match(/\[\s*([\d\s⭐★]+)\s*\]/);
+                    if (inlineStarMatch) {
+                        starRating = extractDigits(inlineStarMatch[1]);
+                        trimmed = trimmed.replace(/\[\s*([\d\s⭐★]+)\s*\]/, '').trim();
+                    }
+                    
+                    let colonIdx = trimmed.indexOf(':');
+                    if (colonIdx !== -1 && colonIdx < 50) {
+                        let possibleAuthor = trimmed.substring(0, colonIdx).trim();
+                        if (!possibleAuthor.includes(' ') || possibleAuthor.length < 30) {
+                            author = possibleAuthor;
+                            reviewText = trimmed.substring(colonIdx + 1).trim();
+                        }
+                    }
+                }
+                
+                parsedList.push({
+                    author: author,
+                    rating: starRating,
+                    text: reviewText
+                });
+            });
+            
+            return parsedList;
+        }
+
+        // Helper to extract a single rating integer out of complex stars formatting like "2 ⭐" or "★ 1"
+        function extractDigits(str) {
+            let digitMatch = str.match(/\d+/);
+            return digitMatch ? parseInt(digitMatch[0]) : 5;
+        }
+
         function openPlaceDetails(id) {
             const place = placesDatabase.find(p => p.id === id);
             if (!place) return;
@@ -1122,14 +1222,11 @@
             document.getElementById('modalCategoryBadge').innerText = place.category;
             document.getElementById('modalKosherBadge').innerText = place.kosher;
             document.getElementById('modalStyleBadge').innerText = place.milk_meat;
-            document.getElementById('modalDescription').innerText = place.description;
             document.getElementById('modalAddress').innerText = place.address;
             document.getElementById('modalHours').innerText = place.hours;
-            
+
             // Set dynamic rating on info grid
             document.getElementById('gridRating').innerText = (place.rating * 2).toFixed(1);
-            
-            // Display exact kosher data from entry form / DB
             document.getElementById('gridKosherType').innerText = place.kosher;
             document.getElementById('gridCategory').innerText = place.category;
             
@@ -1175,28 +1272,89 @@
             // Populate related places Carousel
             renderRelatedPlaces(place);
 
-            // Populate reviews
+            // Populate reviews with improved, highly structured RTL timeline bullet layout
             const reviewsContainer = document.getElementById('modalReviewsContainer');
             reviewsContainer.innerHTML = '';
-            const reviewsArray = place.reviews.split('|');
-            reviewsArray.forEach((rev, i) => {
-                const revDiv = document.createElement('div');
-                revDiv.className = "bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs";
-                revDiv.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-extrabold text-slate-800">מבקר אנונימי #${i + 1}</span>
-                        <div class="flex text-amber-400 gap-0.5">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
+            
+            const colors = [
+                "bg-sky-100 text-sky-800 border-sky-200", 
+                "bg-emerald-100 text-emerald-800 border-emerald-200", 
+                "bg-amber-100 text-amber-800 border-amber-200", 
+                "bg-indigo-100 text-indigo-800 border-indigo-200", 
+                "bg-rose-100 text-rose-800 border-rose-200"
+            ];
+            
+            const parsedReviews = parseReviewText(place.reviews);
+            
+            if (parsedReviews.length === 0) {
+                reviewsContainer.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 text-sm font-semibold">
+                        טרם התקבלו חוות דעת למקום זה.
                     </div>
-                    <p class="text-slate-600 font-medium italic">"${rev}"</p>
                 `;
-                reviewsContainer.appendChild(revDiv);
-            });
+            } else {
+                parsedReviews.forEach((review, i) => {
+                    const randomColor = colors[i % colors.length];
+                    const firstChar = review.author ? review.author.charAt(0) : "מ";
+                    const revDiv = document.createElement('div');
+                    
+                    // Generate dynamic HTML stars based on the parsed rating score
+                    let starsHtml = '';
+                    for (let s = 1; s <= 5; s++) {
+                        if (s <= review.rating) {
+                            starsHtml += `<i class="fa-solid fa-star text-amber-400"></i>`;
+                        } else {
+                            starsHtml += `<i class="fa-regular fa-star text-slate-200"></i>`;
+                        }
+                    }
+
+                    // Dynamic text collapsing/Read More UX to make massive essays extremely pleasant to read
+                    const maxLength = 240;
+                    const isLong = review.text.length > maxLength;
+                    const displayShortText = isLong ? review.text.substring(0, maxLength) + "..." : review.text;
+
+                    // Enhanced review layout: custom RTL "bullet" (avatar) timeline card
+                    revDiv.className = "bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-start gap-4 text-right relative";
+                    revDiv.innerHTML = `
+                        <!-- Bullets Column aligned from right to left (RTL) -->
+                        <div class="flex flex-col items-center shrink-0 mt-1">
+                            <!-- Custom Bullet Node -->
+                            <div class="w-10 h-10 rounded-full ${randomColor} border font-black flex items-center justify-center shadow-sm text-sm z-10 aspect-square select-none">
+                                ${firstChar}
+                            </div>
+                            <!-- Connecting dotted timeline vertical line if there's a next review -->
+                            ${i < parsedReviews.length - 1 ? '<div class="w-0.5 h-20 border-r border-dashed border-brand-500/40 my-2"></div>' : ''}
+                        </div>
+                        
+                        <!-- Content Stack next to the bullet -->
+                        <div class="flex-1 space-y-2">
+                            <div class="flex justify-between items-start flex-wrap gap-1.5">
+                                <div>
+                                    <span class="font-extrabold text-slate-900 text-sm sm:text-base block">${review.author}</span>
+                                    <span class="inline-flex items-center gap-1 bg-emerald-50 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 border border-emerald-100 select-none">
+                                        <i class="fa-solid fa-circle-check"></i> סועד מאומת
+                                    </span>
+                                </div>
+                                <span class="text-[10px] sm:text-xs text-slate-400 font-semibold">לפני מספר ימים</span>
+                            </div>
+                            <div class="flex text-amber-400 gap-0.5 text-xs select-none">
+                                ${starsHtml}
+                            </div>
+                            <!-- Text content with responsive inline collapse toggle -->
+                            <div class="text-slate-700 font-medium text-xs sm:text-sm leading-relaxed mt-2 border-r-2 border-brand-500/30 pr-3">
+                                <p id="review-text-${i}" class="whitespace-pre-line leading-relaxed">${displayShortText}</p>
+                                ${isLong ? `
+                                <button onclick="toggleLongReview(${i}, '${encodeURIComponent(review.text)}', this)" class="text-brand-500 hover:text-brand-600 text-xs font-black mt-2 inline-flex items-center gap-1 transition-colors outline-none focus:ring-0">
+                                    <span>להמשך קריאה</span>
+                                    <i class="fa-solid fa-chevron-down text-[9px] mt-0.5 transition-transform"></i>
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    reviewsContainer.appendChild(revDiv);
+                });
+            }
 
             const isFav = favorites.includes(place.id);
             const modalFavIcon = document.getElementById('modalFavIcon');
@@ -1212,7 +1370,6 @@
             container.classList.remove('hidden');
             container.classList.add('flex');
             
-            // Hide standard body scrolling
             document.body.classList.add('overflow-hidden');
             
             setTimeout(() => {
@@ -1220,11 +1377,27 @@
             }, 10);
         }
 
+        // Global Collapse / Expand toggler function for long essays
+        window.toggleLongReview = function(index, fullTextEncoded, btn) {
+            const p = document.getElementById(`review-text-${index}`);
+            const fullText = decodeURIComponent(fullTextEncoded);
+            const isCollapsed = btn.getAttribute('data-collapsed') !== 'false';
+            
+            if (isCollapsed) {
+                p.innerText = fullText;
+                btn.innerHTML = `<span>צמצם קריאה</span> <i class="fa-solid fa-chevron-up text-[9px] mt-0.5"></i>`;
+                btn.setAttribute('data-collapsed', 'false');
+            } else {
+                p.innerText = fullText.substring(0, 240) + "...";
+                btn.innerHTML = `<span>להמשך קריאה</span> <i class="fa-solid fa-chevron-down text-[9px] mt-0.5"></i>`;
+                btn.setAttribute('data-collapsed', 'true');
+            }
+        };
+
         function renderRelatedPlaces(currentPlace) {
             const container = document.getElementById('relatedPlacesContainer');
             container.innerHTML = '';
 
-            // Filter out current place, prioritize same city or category
             let related = placesDatabase.filter(p => 
                 p.id !== currentPlace.id && 
                 (p.city === currentPlace.city || p.category === currentPlace.category || p.milk_meat === currentPlace.milk_meat)
@@ -1242,6 +1415,7 @@
                 item.className = "shrink-0 w-44 bg-slate-50 rounded-2xl p-2 border border-slate-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer";
                 item.onclick = () => {
                     openPlaceDetails(place.id);
+                    document.getElementById('detailPageContainer').scrollTo({ top: 0, behavior: 'smooth' });
                 };
 
                 item.innerHTML = `
@@ -1272,7 +1446,7 @@
             const thumbs = document.querySelectorAll('#modalGalleryContainer img');
             thumbs.forEach((thumb, idx) => {
                 if (idx === currentGalleryIndex) {
-                    thumb.className = "h-20 w-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition-all border border-brand-500 scale-95 ring-2 ring-brand-100";
+                    thumb.className = "h-20 w-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition-all border-2 border-brand-500 scale-95 ring-2 ring-brand-100";
                 } else {
                     thumb.className = "h-20 w-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition-all border border-slate-200";
                 }
@@ -1303,7 +1477,6 @@
             const container = document.getElementById('detailPageContainer');
             container.classList.add('pointer-events-none', 'opacity-0');
             
-            // Restore standard body scrolling
             document.body.classList.remove('overflow-hidden');
             
             setTimeout(() => {
@@ -1326,6 +1499,7 @@
             }
         }
 
+        // Clipboards helper
         function shareRestaurant() {
             const name = document.getElementById('modalName').innerText;
             const address = document.getElementById('modalAddress').innerText;
@@ -1344,10 +1518,7 @@
         function toggleFavorite(id, e) {
             if (e) e.stopPropagation();
             
-            // Re-sanitize array
-            favorites = [...new Set(favorites)].filter(fid => fid && typeof fid === 'string');
             const idx = favorites.indexOf(id);
-            
             if (idx === -1) {
                 favorites.push(id);
                 showToast("❤️ התווסף למועדפים שלך!", "success");
@@ -1356,18 +1527,14 @@
                 showToast("💔 הוסר מהמועדפים שלך", "warning");
             }
             
-            favorites = [...new Set(favorites)];
             localStorage.setItem('kosher_favorites', JSON.stringify(favorites));
-            
-            updateFavoritesBadge();
+            sanitizeFavorites(); // Sanitizes coordinates list to maintain complete accuracy
             renderPlaces();
             renderFavoritesList();
         }
 
         function updateFavoritesBadge() {
-            favorites = [...new Set(favorites)].filter(fid => fid && typeof fid === 'string');
             const count = favorites.length;
-            
             const badgeDesktop = document.getElementById('favoritesBadge');
             const badgeMobile = document.getElementById('mobileFavsBadge');
             
@@ -1407,7 +1574,7 @@
             const container = document.getElementById('favoritesListContainer');
             container.innerHTML = '';
 
-            favorites = [...new Set(favorites)].filter(fid => fid && typeof fid === 'string');
+            favorites = [...new Set(favorites)].filter(fid => fid && typeof fid === 'string' && placesDatabase.some(p => p.id === fid));
             const favItems = placesDatabase.filter(p => favorites.includes(p.id));
 
             if (favItems.length === 0) {
@@ -1452,7 +1619,6 @@
                 return;
             }
 
-            // Desktop Google Map
             const desktopMapDiv = document.getElementById('desktopMap');
             if (desktopMapDiv && !desktopMapInstance) {
                 desktopMapInstance = new google.maps.Map(desktopMapDiv, {
@@ -1461,11 +1627,10 @@
                     mapTypeControl: false,
                     streetViewControl: false,
                     fullscreenControl: true,
-                    gestureHandling: 'greedy' // Keeps website frames stable when scrolling
+                    gestureHandling: 'greedy' 
                 });
             }
 
-            // Mobile Google Map
             const mobileMapDiv = document.getElementById('mobileMap');
             if (mobileMapDiv && !mobileMapInstance) {
                 mobileMapInstance = new google.maps.Map(mobileMapDiv, {
@@ -1474,7 +1639,7 @@
                     mapTypeControl: false,
                     streetViewControl: false,
                     fullscreenControl: false,
-                    gestureHandling: 'greedy' // Ensures mobile zooming is captured inside Map container only
+                    gestureHandling: 'greedy' 
                 });
             }
         }
@@ -1482,11 +1647,9 @@
         function updateMapsMarkers(placesList) {
             if (typeof google === 'undefined') return;
 
-            // Clear old desktop markers
             desktopMarkers.forEach(marker => marker.setMap(null));
             desktopMarkers = [];
 
-            // Clear old mobile markers
             mobileMarkers.forEach(marker => marker.setMap(null));
             mobileMarkers = [];
 
@@ -1547,17 +1710,25 @@
             const place = placesDatabase.find(p => p.id === id);
             if (!place) return;
 
+            const placeIndex = placesDatabase.findIndex(p => p.id === id);
+
             if (window.innerWidth >= 768) {
                 document.getElementById('desktopMapSection').scrollIntoView({ behavior: 'smooth' });
                 if (desktopMapInstance) {
                     desktopMapInstance.setCenter(place.coords);
                     desktopMapInstance.setZoom(15);
+                    if (desktopMarkers[placeIndex]) {
+                        google.maps.event.trigger(desktopMarkers[placeIndex], 'click');
+                    }
                 }
             } else {
                 switchMobileTab('map');
                 if (mobileMapInstance) {
                     mobileMapInstance.setCenter(place.coords);
                     mobileMapInstance.setZoom(15);
+                    if (mobileMarkers[placeIndex]) {
+                        google.maps.event.trigger(mobileMarkers[placeIndex], 'click');
+                    }
                 }
             }
             showToast(`🗺️ מתמקד ב: ${place.name}`, "success");
@@ -1592,12 +1763,11 @@
                 tabSearchBtn.classList.add('text-slate-400');
                 tabSearchBtn.classList.remove('text-brand-500');
                 
-                // Triggers immediate map focus closest to user location if active, otherwise closest business
                 setTimeout(() => {
                     if (mobileMapInstance && typeof google !== 'undefined') {
                         google.maps.event.trigger(mobileMapInstance, 'resize');
                         
-                        let targetCenter = { lat: 32.7610, lng: 34.9702 }; // Tirat Carmel
+                        let targetCenter = { lat: 32.7610, lng: 34.9702 }; 
                         if (userCoords) {
                             targetCenter = userCoords;
                         } else if (placesDatabase.length > 0) {
