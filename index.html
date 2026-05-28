@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <!-- תוקן: נוספו הגדרות minimum-scale ו- viewport-fit כדי לנעול טוב יותר את התצוגה באייפון ואנדרואיד -->
+    <!-- תוקן: הגדרות מידות התצוגה -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- SEO Meta Tags -->
@@ -44,7 +44,7 @@
         *, *::before, *::after {
             box-sizing: border-box;
         }
-        /* תוקן: שונה מ-100vw ל-100% והוסף overflow-x: hidden כדי למנוע גלילה רוחבית וזום באגים במובייל */
+        /* תוקן: שימוש ב-overflow-x: clip שפותר גם את בעיית הגלילה הרוחבית וגם לא שובר את פונקציית ה-sticky */
         html {
             font-family: 'Rubik', sans-serif !important;
             max-width: 100%;
@@ -53,7 +53,7 @@
             padding: 0;
             background-color: #fcfdfe;
             -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
+            overflow-x: clip; 
         }
         body {
             font-family: 'Rubik', sans-serif !important;
@@ -62,7 +62,7 @@
             margin: 0;
             padding: 0;
             background-color: #fcfdfe;
-            overflow-x: hidden; 
+            overflow-x: clip; 
         }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -414,18 +414,25 @@
     <!-- Mobile Fullscreen Map Page -->
     <div id="mobileMapPage" class="fixed inset-0 bg-white z-[60] hidden flex flex-col">
         <div class="h-16 bg-white border-b border-slate-100 px-4 flex items-center justify-between shrink-0">
-            <!-- תוקן: כפתור חזרה ברור יותר -->
+            <!-- כפתור חזרה -->
             <button onclick="switchMobileTab('search')" class="text-slate-800 font-black flex items-center gap-1.5 py-1 px-3 bg-slate-100 rounded-xl text-xs shadow-sm active:scale-95 transition-transform">
                 <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
                 <span>חזרה</span>
             </button>
             
-            <!-- תוקן: הכותרת כעת לחיצה ומחזירה לעמוד הבית ממש כמו הלוגו הראשי -->
-            <button onclick="switchMobileTab('search'); handleLogoClick();" class="font-black text-slate-900 text-sm flex items-center gap-1">
-                <i class="fa-solid fa-utensils text-brand-500"></i>
-                מפת KosherGo
+            <!-- תוקן: הלוגו של האתר במפה כעת משמש ככפתור חזרה ברור ובולט -->
+            <button onclick="switchMobileTab('search'); handleLogoClick();" class="flex items-center gap-2 shrink-0 outline-none transition-transform active:scale-95 bg-transparent border-0">
+                <div class="w-7 h-7 rounded-lg wolt-cyan flex items-center justify-center text-white shadow-sm">
+                    <i class="fa-solid fa-utensils text-[11px] text-white"></i>
+                </div>
+                <div class="text-right">
+                    <span class="text-lg font-black tracking-tight text-brand-500 flex items-center gap-1 leading-none">
+                        Kosher<span class="text-slate-900">Go</span>
+                    </span>
+                </div>
             </button>
 
+            <!-- כפתור מיקום מרכזי -->
             <button onclick="requestUserLocation(false)" class="text-brand-700 hover:text-brand-800 font-bold text-xs flex items-center gap-1">
                 <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
                 <span>מיקום</span>
@@ -433,7 +440,7 @@
         </div>
         <div id="mobileMap" class="flex-1 w-full h-full relative z-10"></div>
         
-        <!-- תוקן: כפתור חזרה צף בתחתית עמוד המפה לנוחות משתמש מקסימלית -->
+        <!-- כפתור חזרה צף בתחתית עמוד המפה -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-11/12 max-w-xs">
             <button onclick="switchMobileTab('search')" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 border border-slate-700 hover:bg-slate-800 active:scale-95 transition-all">
                 <i class="fa-solid fa-list-ul"></i>
@@ -1257,13 +1264,37 @@
                         renderPlaces();
                         showToast("📍 המיקום שלך אותר! מציג מקומות קרובים אלייך.", "success");
                         
-                        if (desktopMapInstance) {
-                            desktopMapInstance.setCenter(userCoords);
-                            desktopMapInstance.setZoom(14);
-                        }
-                        if (mobileMapInstance) {
-                            mobileMapInstance.setCenter(userCoords);
-                            mobileMapInstance.setZoom(14);
+                        // תוקן: יצירת סמן כחול של המשתמש על המפה
+                        if (typeof google !== 'undefined') {
+                            const userIcon = {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 8,
+                                fillColor: '#00c2e8', 
+                                fillOpacity: 1,
+                                strokeColor: '#ffffff',
+                                strokeWeight: 2,
+                            };
+                            
+                            if (desktopMapInstance) {
+                                if(!window.userMarkerDesktop) {
+                                    window.userMarkerDesktop = new google.maps.Marker({map: desktopMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                                } else {
+                                    window.userMarkerDesktop.setMap(desktopMapInstance);
+                                }
+                                window.userMarkerDesktop.setPosition(userCoords);
+                                desktopMapInstance.setCenter(userCoords);
+                                desktopMapInstance.setZoom(14);
+                            }
+                            if (mobileMapInstance) {
+                                if(!window.userMarkerMobile) {
+                                    window.userMarkerMobile = new google.maps.Marker({map: mobileMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                                } else {
+                                    window.userMarkerMobile.setMap(mobileMapInstance);
+                                }
+                                window.userMarkerMobile.setPosition(userCoords);
+                                mobileMapInstance.setCenter(userCoords);
+                                mobileMapInstance.setZoom(14);
+                            }
                         }
                     },
                     (error) => {
@@ -1292,6 +1323,11 @@
             document.getElementById('distanceNotification').classList.remove('flex');
             document.getElementById('activeDistanceIndicator').classList.add('hidden');
             document.getElementById('bookingGeoText').innerText = "חפש לפי המיקום הנוכחי שלי";
+            
+            // תוקן: הסרת הסמן כשמבטלים סינון מרחק
+            if (window.userMarkerDesktop) window.userMarkerDesktop.setMap(null);
+            if (window.userMarkerMobile) window.userMarkerMobile.setMap(null);
+            
             renderPlaces();
         }
 
