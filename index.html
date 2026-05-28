@@ -2,10 +2,8 @@
 <html lang="he" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <!-- תוקן: הגדרות מידות התצוגה -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- SEO Meta Tags -->
     <title>KosherGo - גלו מסעדות, בתי קפה ועגלות קפה כשרים</title>
     <meta name="description" content="KosherGo הוא אינדקס המסעדות הכשרות המוביל בישראל. מצאו בקלות מסעדות בשריות, בתי קפה ועגלות קפה כשרים למהדרין, כולל שעות פתיחה, ניווט וחוות דעת.">
     <link rel="canonical" href="https://koshergo.co.il/">
@@ -14,7 +12,6 @@
     <meta property="og:url" content="https://koshergo.co.il/">
     <meta property="og:type" content="website">
     
-    <!-- Schema Markup (JSON-LD) for the Homepage -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -29,15 +26,12 @@
     }
     </script>
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -136,20 +130,16 @@
 </head>
 <body class="bg-[#fcfdfe] text-slate-800 min-h-screen flex flex-col antialiased relative pb-20 md:pb-0">
 
-    <!-- Toast Notifications Container -->
     <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
-    <!-- Top Alert Bar -->
     <div class="bg-brand-500 text-white text-center py-2 px-4 text-xs md:text-sm font-bold relative z-[110] flex items-center justify-center gap-2 shadow-sm">
         <i class="fa-solid fa-certificate text-white animate-spin" style="animation-duration: 4s;"></i>
         <span>כל המסעדות כשרות למהדרין / כשרות וסגורות בשבת כהלכה! 🍷</span>
     </div>
 
-    <!-- Header Area -->
     <header class="sticky-header bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm" id="mainHeader">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4" aria-label="תפריט ראשי">
             
-            <!-- Logo - Kosher Go with Food/Plate Icon -->
             <a href="#" class="flex items-center gap-2.5 shrink-0" onclick="handleLogoClick(); return false;" aria-label="דף הבית - KosherGo">
                 <div class="w-10 h-10 md:w-11 md:h-11 rounded-2xl wolt-cyan flex items-center justify-center text-white shadow-md">
                     <i class="fa-solid fa-utensils text-lg text-white"></i>
@@ -162,7 +152,6 @@
                 </div>
             </a>
 
-            <!-- Search Field (Desktop Header) -->
             <div class="hidden md:flex flex-1 max-w-md relative">
                 <input type="text" id="desktopSearchInput" placeholder="חיפוש מסעדה, סוג אוכל, עגלת קפה..." 
                        class="w-full bg-slate-100/80 border border-transparent focus:bg-white focus:border-brand-500 rounded-2xl py-2.5 pr-11 pl-4 text-sm font-medium transition-all"
@@ -170,15 +159,12 @@
                 <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center gap-3 shrink-0">
-                <!-- Location Finder (Desktop) -->
                 <button onclick="requestUserLocation(false)" class="hidden md:flex items-center gap-2 bg-[#e5f9fc] text-brand-700 hover:bg-brand-100 text-xs md:text-sm font-bold py-2.5 px-4 rounded-2xl transition-colors" aria-label="מצא מסעדות קרובות אלי">
                     <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
                     <span id="locationBtnText">הקרוב אליי</span>
                 </button>
 
-                <!-- City Dropdown -->
                 <div class="relative">
                     <select id="citySelector" onchange="filterByCity(this.value)" class="appearance-none bg-slate-100 hover:bg-slate-200/70 rounded-2xl py-2.5 pr-4 pl-9 text-xs md:text-sm font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500" aria-label="בחר אזור חיפוש">
                         <option value="all">כל הארץ 📍</option>
@@ -191,7 +177,6 @@
                     <i class="fa-solid fa-chevron-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                 </div>
 
-                <!-- Favorites Badge Button (Desktop) -->
                 <button onclick="toggleFavoritesPanel(true)" class="relative p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 transition-colors" title="מועדפים" aria-label="מועדפים">
                     <i class="fa-solid fa-heart text-base md:text-lg"></i>
                     <span id="favoritesBadge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white leading-none aspect-square">0</span>
@@ -200,7 +185,6 @@
         </nav>
     </header>
 
-    <!-- Wolt Inspired Clean Hero with Light Gradient and Search Box -->
     <section class="bg-gradient-to-b from-[#e5f9fc] via-[#f7fdfd] to-[#fcfdfe] text-slate-800 py-10 md:py-16 px-4 relative overflow-hidden shadow-sm border-b border-slate-100/50" aria-labelledby="heroTitle">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
             
@@ -218,7 +202,6 @@
                 </p>
             </div>
 
-            <!-- Beautiful Weekly Featured Card -->
             <div id="weeklyFeaturedSection" class="w-full md:w-2/5 flex justify-center items-center">
                 <div onclick="openPlaceDetailsDirectlyFromFeatured()" class="bg-white text-slate-900 rounded-3xl p-4 shadow-xl border border-slate-100 max-w-sm w-full relative transform hover:scale-105 transition-transform duration-300 cursor-pointer">
                     <div class="absolute -top-3 right-4 bg-[#00c2e8] text-white text-[11px] font-black px-3 py-1 rounded-full shadow-md z-10">
@@ -239,11 +222,9 @@
             </div>
         </div>
 
-        <!-- Float Wolt Style Search Card (Main Search Box) -->
         <div class="max-w-4xl mx-auto bg-white p-2 rounded-3xl shadow-2xl mt-8 relative z-20 border border-slate-100">
             <div class="bg-white rounded-2xl p-2 grid grid-cols-1 md:grid-cols-12 gap-2 text-slate-900">
                 
-                <!-- Destination / Text Search -->
                 <div class="md:col-span-5 relative flex items-center border-b md:border-b-0 md:border-l border-slate-100 pb-2 md:pb-0 md:pl-2">
                     <i class="fa-solid fa-search text-slate-400 right-3 absolute text-lg"></i>
                     <input type="text" id="bookingSearchInput" placeholder="לאן נוסעים? שם מסעדה, סוג קולינרי או יישוב..." 
@@ -251,7 +232,6 @@
                            oninput="handleSearch(this.value)">
                 </div>
 
-                <!-- Geo Button Quick Action -->
                 <div class="md:col-span-4 flex items-center border-b md:border-b-0 md:border-l border-slate-100 pb-2 md:pb-0 md:pl-2">
                     <button onclick="requestUserLocation(false)" class="w-full flex items-center justify-between px-2 py-2 hover:bg-slate-50 rounded-xl text-right text-sm font-bold text-brand-600 transition-colors">
                         <span class="flex items-center gap-2">
@@ -262,7 +242,6 @@
                     </button>
                 </div>
 
-                <!-- Search Action / Quick Reset -->
                 <div class="md:col-span-3 flex items-center gap-2">
                     <button onclick="applyBookingSearch()" class="w-full wolt-cyan wolt-cyan-hover text-white font-bold py-2.5 px-4 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
                         <span>חפש</span>
@@ -277,8 +256,7 @@
         </div>
     </section>
 
-    <!-- Quick Categories Carousel -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-hidden">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between mb-3">
             <h2 class="text-lg md:text-xl font-black text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-tags wolt-text-cyan"></i>
@@ -289,7 +267,6 @@
         <div class="flex gap-3 overflow-x-auto pb-3 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" id="categoryCarousel"></div>
     </section>
 
-    <!-- Filter Quick Chips sticky bar -->
     <section class="bg-white border-y border-slate-100 sticky-filters shadow-sm py-2.5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-3 overflow-x-auto no-scrollbar">
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 max-w-full w-full whitespace-nowrap" style="scrollbar-width: none;">
@@ -327,10 +304,8 @@
         </div>
     </section>
 
-    <!-- Main Section (Results Counter / Location Banner) -->
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         
-        <!-- Distance Active Notification Banner -->
         <div id="distanceNotification" class="bg-brand-50 border border-brand-100 rounded-2xl p-3 mb-6 hidden items-center justify-between text-brand-800 text-xs md:text-sm font-bold">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-location-dot animate-bounce"></i>
@@ -347,7 +322,6 @@
             <span id="resultsCounter" class="bg-brand-50 text-brand-700 text-xs font-extrabold px-3 py-1.5 rounded-xl border border-brand-100">טוען נתונים...</span>
         </div>
 
-        <!-- No Results Handler -->
         <div id="noResultsState" class="hidden text-center py-16 px-4 bg-white rounded-3xl shadow-sm border border-slate-100 max-w-lg mx-auto my-8">
             <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                 <i class="fa-solid fa-utensils-slash"></i>
@@ -357,11 +331,9 @@
             <button onclick="resetFilters()" class="mt-4 wolt-cyan text-white font-bold py-2 px-6 rounded-xl text-xs">אפס את כל המסננים</button>
         </div>
 
-        <!-- Grid Cards Layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full" id="placesGrid"></div>
     </main>
 
-    <!-- Interactive Map Section (Desktop Map) -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 border-t border-slate-200 hidden md:block" id="desktopMapSection">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -373,7 +345,6 @@
         <div id="desktopMap" class="w-full h-[400px] rounded-3xl shadow-md border border-slate-200 relative overflow-hidden z-10"></div>
     </section>
 
-    <!-- SEO Optimized Footer + Legal Links -->
     <footer class="bg-white border-t border-slate-100 pt-8 pb-24 md:pb-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-bold text-slate-600 mb-4">
@@ -391,7 +362,6 @@
         </div>
     </footer>
 
-    <!-- Mobile Navigation Tab Bar (Wolt Footer Navigation) -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-150 h-16 z-40 flex items-center justify-around px-2 shadow-lg">
         <button onclick="switchMobileTab('search')" id="tab-search" class="flex flex-col items-center justify-center gap-1 text-brand-500 flex-1 py-1">
             <i class="fa-solid fa-magnifying-glass text-lg"></i>
@@ -411,16 +381,13 @@
         </button>
     </div>
 
-    <!-- Mobile Fullscreen Map Page -->
     <div id="mobileMapPage" class="fixed inset-0 bg-white z-[60] hidden flex flex-col">
         <div class="h-16 bg-white border-b border-slate-100 px-4 flex items-center justify-between shrink-0">
-            <!-- כפתור חזרה -->
             <button onclick="switchMobileTab('search')" class="text-slate-800 font-black flex items-center gap-1.5 py-1 px-3 bg-slate-100 rounded-xl text-xs shadow-sm active:scale-95 transition-transform">
                 <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
                 <span>חזרה</span>
             </button>
             
-            <!-- תוקן: הלוגו של האתר במפה כעת משמש ככפתור חזרה ברור ובולט -->
             <button onclick="switchMobileTab('search'); handleLogoClick();" class="flex items-center gap-2 shrink-0 outline-none transition-transform active:scale-95 bg-transparent border-0">
                 <div class="w-7 h-7 rounded-lg wolt-cyan flex items-center justify-center text-white shadow-sm">
                     <i class="fa-solid fa-utensils text-[11px] text-white"></i>
@@ -432,7 +399,6 @@
                 </div>
             </button>
 
-            <!-- כפתור מיקום מרכזי -->
             <button onclick="requestUserLocation(false)" class="text-brand-700 hover:text-brand-800 font-bold text-xs flex items-center gap-1">
                 <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
                 <span>מיקום</span>
@@ -440,7 +406,6 @@
         </div>
         <div id="mobileMap" class="flex-1 w-full h-full relative z-10"></div>
         
-        <!-- כפתור חזרה צף בתחתית עמוד המפה -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-11/12 max-w-xs">
             <button onclick="switchMobileTab('search')" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 border border-slate-700 hover:bg-slate-800 active:scale-95 transition-all">
                 <i class="fa-solid fa-list-ul"></i>
@@ -449,10 +414,8 @@
         </div>
     </div>
 
-    <!-- Immersive Internal Detail Page View (Wolt Inspired Full-screen overlay) -->
     <div id="detailPageContainer" class="fixed inset-0 z-[100] bg-white hidden overflow-y-auto page-transition opacity-0 pointer-events-none flex-col">
         
-        <!-- Premium Action Header -->
         <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 h-14 px-4 flex items-center justify-between shrink-0 z-50">
             <button onclick="closeDetailsModal()" class="text-slate-800 font-black flex items-center gap-1.5 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs transition-colors">
                 <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
@@ -464,16 +427,12 @@
             </button>
         </div>
 
-        <!-- Semantic Article Wrapper -->
         <article class="max-w-4xl mx-auto w-full flex-1 flex flex-col pb-10">
-            <!-- Unifying Banner & Gallery -->
             <div class="shrink-0 bg-slate-900 flex flex-col">
-                <!-- Image Gallery Banner -->
                 <header class="h-64 sm:h-96 relative group overflow-hidden">
                     <img id="modalMainImage" src="" alt="תמונה ראשית של המסעדה" class="w-full h-full object-cover transition-opacity duration-300 cursor-pointer" onclick="nextSliderImage()" title="לחצו להחלפת תמונה">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none"></div>
                     
-                    <!-- Navigation Arrows -->
                     <button onclick="prevSliderImage(event)" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg active:scale-95 z-20" aria-label="תמונה קודמת">
                         <i class="fa-solid fa-chevron-left text-lg"></i>
                     </button>
@@ -481,7 +440,6 @@
                         <i class="fa-solid fa-chevron-right text-lg"></i>
                     </button>
                     
-                    <!-- Bottom Header Badge Overlay -->
                     <div class="absolute bottom-4 right-4 text-white left-4 flex flex-col gap-1.5 text-right pointer-events-none">
                         <div class="flex flex-wrap gap-1.5">
                             <span id="modalCategoryBadge" class="text-[10px] font-black uppercase bg-brand-500 text-white px-2.5 py-1 rounded-md"></span>
@@ -492,22 +450,18 @@
                     </div>
                 </header>
 
-                <!-- Thumbnails Strip -->
                 <div class="px-4 py-3 bg-slate-950 border-t border-slate-800/80">
                     <div id="modalGalleryContainer" class="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar scroll-smooth snap-x"></div>
                 </div>
             </div>
 
-            <!-- Scrollable Content Segment -->
             <div class="p-4 sm:p-6 space-y-6 text-right bg-white">
                 
-                <!-- Real-time Status Badge -->
                 <section id="modalStatusBadge" class="flex items-center gap-2 py-3 px-4 rounded-2xl border font-bold text-xs sm:text-sm shadow-sm transition-all">
                     <i class="fa-solid fa-clock text-base"></i>
                     <span id="modalStatusText">בודק סטטוס פעילות...</span>
                 </section>
 
-                <!-- Parameters quick metric board -->
                 <section class="grid grid-cols-4 gap-2 text-center border-b border-slate-150 pb-4" aria-label="נתונים מהירים">
                     <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-100 flex flex-col justify-center">
                         <i class="fa-solid fa-star text-amber-500 text-sm mb-1"></i>
@@ -531,7 +485,6 @@
                     </div>
                 </section>
 
-                <!-- Action Button Matrix -->
                 <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2" aria-label="פעולות למסעדה">
                     <a id="modalWazeBtn" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-[#0099FF] hover:bg-[#0088EB] text-white text-xs font-bold py-3 px-4 rounded-xl transition-colors shadow-sm text-center">
                         <i class="fa-brands fa-waze text-base"></i>
@@ -551,7 +504,6 @@
                     </button>
                 </nav>
 
-                <!-- Information list cards -->
                 <section class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600">
                     <div class="space-y-1">
                         <h3 class="font-bold text-slate-900"><i class="fa-solid fa-map-pin ml-1.5 text-rose-500"></i>כתובת:</h3>
@@ -563,7 +515,6 @@
                     </div>
                 </section>
 
-                <!-- Interactive Review Stack -->
                 <section class="space-y-4">
                     <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 flex items-center gap-2">
                         <i class="fa-solid fa-comments wolt-text-cyan"></i>
@@ -572,7 +523,6 @@
                     <div id="modalReviewsContainer" class="flex flex-col gap-6"></div>
                 </section>
 
-                <!-- Specific Location Map Inside Detail view -->
                 <section class="pt-4 pb-2">
                     <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-map-location-dot wolt-text-cyan"></i>
@@ -581,7 +531,6 @@
                     <div id="modalSpecificMap" class="w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-sm border border-slate-200 z-10 relative"></div>
                 </section>
 
-                <!-- Related Places Section -->
                 <section>
                     <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-utensils wolt-text-cyan"></i>
@@ -594,21 +543,17 @@
         </article>
     </div>
 
-    <!-- Favorites Panel Drawer -->
     <div id="favoritesPanel" class="fixed inset-0 z-[120] overflow-hidden hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="toggleFavoritesPanel(false)"></div>
-        <div class="absolute inset-y-0 left-0 max-w-full flex pr-10">
+        <div class="absolute inset-y-0 left-0 max-w-full flex pr-10" onclick="if(event.target === this) toggleFavoritesPanel(false)">
             <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col h-full relative">
-                <!-- Header -->
                 <div class="p-6 border-b border-slate-150 flex items-center justify-between shrink-0 bg-brand-500 text-white">
                     <h2 class="text-lg font-black flex items-center gap-2 text-white">
                         <i class="fa-solid fa-heart text-white"></i> המועדפים שלי
                     </h2>
                     <button onclick="toggleFavoritesPanel(false)" class="text-slate-100 hover:text-white p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
                 </div>
-                <!-- Content -->
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar bg-[#f5f7fa]" id="favoritesListContainer"></div>
-                <!-- Footer with Close Button -->
                 <div class="p-4 border-t border-slate-150 bg-white shrink-0">
                     <button onclick="toggleFavoritesPanel(false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition-colors">
                         סגירת רשימה
@@ -618,7 +563,6 @@
         </div>
     </div>
     
-    <!-- Legal Modals Container -->
     <div id="legalModalWrapper" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-slate-900/50 backdrop-blur-sm">
         <div class="bg-white w-full max-w-3xl max-h-full rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
             
@@ -632,14 +576,11 @@
                 </button>
             </div>
             
-            <!-- Dynamic Content Area -->
             <div id="legalModalContent" class="p-6 overflow-y-auto text-sm text-slate-700 space-y-4 leading-relaxed">
-                <!-- Content injected here via JS -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYki5wubNCKvTqM1qQEqcPlMzdpmstaas&libraries=places" async defer></script>
 
     <script>
@@ -748,7 +689,6 @@
             }, 1200);
         });
 
-        // פונקציה חלקה לניווט למעלה ולאיפוס בעת לחיצה על הלוגו (ללא הקפצת הודעה)
         function handleLogoClick() {
             activeCategory = 'all';
             activeCity = 'all';
@@ -773,6 +713,11 @@
 
             renderCategoryCarousel();
             renderPlaces();
+            
+            const mobileMapPage = document.getElementById('mobileMapPage');
+            if (mobileMapPage && !mobileMapPage.classList.contains('hidden')) {
+                switchMobileTab('search');
+            }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1264,7 +1209,6 @@
                         renderPlaces();
                         showToast("📍 המיקום שלך אותר! מציג מקומות קרובים אלייך.", "success");
                         
-                        // תוקן: יצירת סמן כחול של המשתמש על המפה
                         if (typeof google !== 'undefined') {
                             const userIcon = {
                                 path: google.maps.SymbolPath.CIRCLE,
@@ -1295,6 +1239,14 @@
                                 mobileMapInstance.setCenter(userCoords);
                                 mobileMapInstance.setZoom(14);
                             }
+                            if (detailModalMapInstance) {
+                                if(!window.userMarkerDetail) {
+                                    window.userMarkerDetail = new google.maps.Marker({map: detailModalMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                                } else {
+                                    window.userMarkerDetail.setMap(detailModalMapInstance);
+                                }
+                                window.userMarkerDetail.setPosition(userCoords);
+                            }
                         }
                     },
                     (error) => {
@@ -1324,9 +1276,9 @@
             document.getElementById('activeDistanceIndicator').classList.add('hidden');
             document.getElementById('bookingGeoText').innerText = "חפש לפי המיקום הנוכחי שלי";
             
-            // תוקן: הסרת הסמן כשמבטלים סינון מרחק
             if (window.userMarkerDesktop) window.userMarkerDesktop.setMap(null);
             if (window.userMarkerMobile) window.userMarkerMobile.setMap(null);
+            if (window.userMarkerDetail) window.userMarkerDetail.setMap(null);
             
             renderPlaces();
         }
@@ -1620,7 +1572,6 @@
                         streetViewControl: false,
                         fullscreenControl: true,
                         gestureHandling: 'greedy',
-                        /* תוקן: מאפשר כפתורי זום במפה הקטנה */
                         zoomControl: true 
                     });
                     detailModalMarker = new google.maps.Marker({
@@ -1651,6 +1602,23 @@
                     detailModalMarker.addListener('click', () => {
                         detailModalMapInstance.infowindow.open(detailModalMapInstance, detailModalMarker);
                     });
+                    
+                    if (isGeoActive && userCoords) {
+                        const userIcon = {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 8,
+                            fillColor: '#00c2e8', 
+                            fillOpacity: 1,
+                            strokeColor: '#ffffff',
+                            strokeWeight: 2,
+                        };
+                        if(!window.userMarkerDetail) {
+                            window.userMarkerDetail = new google.maps.Marker({map: detailModalMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                        } else {
+                            window.userMarkerDetail.setMap(detailModalMapInstance);
+                        }
+                        window.userMarkerDetail.setPosition(userCoords);
+                    }
                 }, 350);
             }
 
@@ -1797,7 +1765,7 @@
                         <p class="text-[9px] text-slate-400 truncate mt-0.5"><i class="fa-solid fa-map-pin ml-0.5"></i>${place.city}</p>
                         <p class="text-[9px] font-bold mt-1 ${status.isOpen ? 'text-emerald-600' : 'text-rose-600'} truncate">${status.text}</p>
                         <div class="flex items-center justify-between mt-2 border-t border-slate-100 pt-1 text-[9px] font-bold text-slate-500">
-                            <span class="text-amber-600">${place.kosher.includes('מהדרין') ? 'מהדרין' : 'כשר'}</span>
+                            <span class="text-amber-600 truncate max-w-[80px]" title="${place.kosher}">${place.kosher}</span>
                             <span class="flex items-center gap-0.5"><i class="fa-solid fa-star text-amber-500"></i> ${(place.rating * 2).toFixed(1)}</span>
                         </div>
                     </div>
@@ -2008,7 +1976,6 @@
                     streetViewControl: false,
                     fullscreenControl: true,
                     gestureHandling: 'greedy',
-                    /* תוקן: מאפשר כפתורי זום */
                     zoomControl: true 
                 });
             }
@@ -2022,9 +1989,35 @@
                     streetViewControl: false,
                     fullscreenControl: false,
                     gestureHandling: 'greedy',
-                    /* תוקן: מאפשר כפתורי זום במובייל */
                     zoomControl: true 
                 });
+            }
+            
+            if (isGeoActive && userCoords && typeof google !== 'undefined') {
+                const userIcon = {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 8,
+                    fillColor: '#00c2e8', 
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 2,
+                };
+                if (desktopMapInstance) {
+                    if(!window.userMarkerDesktop) {
+                        window.userMarkerDesktop = new google.maps.Marker({map: desktopMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                    } else {
+                        window.userMarkerDesktop.setMap(desktopMapInstance);
+                    }
+                    window.userMarkerDesktop.setPosition(userCoords);
+                }
+                if (mobileMapInstance) {
+                    if(!window.userMarkerMobile) {
+                        window.userMarkerMobile = new google.maps.Marker({map: mobileMapInstance, icon: userIcon, zIndex: 9999, title: "המיקום שלי"});
+                    } else {
+                        window.userMarkerMobile.setMap(mobileMapInstance);
+                    }
+                    window.userMarkerMobile.setPosition(userCoords);
+                }
             }
         }
 
@@ -2066,6 +2059,8 @@
                         map: desktopMapInstance,
                         title: place.name
                     });
+                    
+                    dMarker.placeId = place.id;
 
                     dMarker.addListener('click', () => {
                         infowindow.open(desktopMapInstance, dMarker);
@@ -2080,6 +2075,8 @@
                         map: mobileMapInstance,
                         title: place.name
                     });
+                    
+                    mMarker.placeId = place.id;
 
                     mMarker.addListener('click', () => {
                         infowindow.open(mobileMapInstance, mMarker);
@@ -2094,15 +2091,14 @@
             const place = placesDatabase.find(p => p.id === id);
             if (!place) return;
 
-            const placeIndex = placesDatabase.findIndex(p => p.id === id);
-
             if (window.innerWidth >= 768) {
                 document.getElementById('desktopMapSection').scrollIntoView({ behavior: 'smooth' });
                 if (desktopMapInstance) {
                     desktopMapInstance.setCenter(place.coords);
                     desktopMapInstance.setZoom(15);
-                    if (desktopMarkers[placeIndex]) {
-                        google.maps.event.trigger(desktopMarkers[placeIndex], 'click');
+                    const dMarker = desktopMarkers.find(m => m.placeId === id);
+                    if (dMarker) {
+                        google.maps.event.trigger(dMarker, 'click');
                     }
                 }
             } else {
@@ -2110,8 +2106,9 @@
                 if (mobileMapInstance) {
                     mobileMapInstance.setCenter(place.coords);
                     mobileMapInstance.setZoom(15);
-                    if (mobileMarkers[placeIndex]) {
-                        google.maps.event.trigger(mobileMarkers[placeIndex], 'click');
+                    const mMarker = mobileMarkers.find(m => m.placeId === id);
+                    if (mMarker) {
+                        google.maps.event.trigger(mMarker, 'click');
                     }
                 }
             }
@@ -2119,12 +2116,17 @@
         }
 
         function navigateToMapFromModal() {
-            closeDetailsModal();
-            const id = document.getElementById('modalMapNavigateBtn').getAttribute('data-target-id');
-            if (id) {
-                setTimeout(() => {
-                    focusOnMapAndCenter(id);
-                }, 350);
+            const container = document.getElementById('detailPageContainer');
+            const specificMap = document.getElementById('modalSpecificMap');
+            if (container && specificMap) {
+                const headerOffset = 60;
+                const elementPosition = specificMap.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + container.scrollTop - headerOffset;
+                
+                container.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         }
 
@@ -2220,7 +2222,7 @@
                 title: "תנאי שימוש והגבלת אחריות",
                 content: `
                     <h3 class="font-bold text-lg mb-2">1. הסכמה לתנאים</h3>
-                    <p>בעצם כניסתך לאתר והשימוש בו, הנך מסכים/ה לתנאי השימוש המפורטים מטה. אם אינך מסכים/ה לתנאים אלו, נבקשך להימנע משימוש באתר.</p>
+                    <p>בעצם כניסתך לאתר והשימוש בו, הנך מסכים/ה לתנאים השימוש המפורטים מטה. אם אינך מסכים/ה לתנאים אלו, נבקשך להימנע משימוש באתר.</p>
 
                     <h3 class="font-bold text-lg mt-4 mb-2 text-rose-600 bg-rose-50 p-2 rounded-lg inline-block border border-rose-200">2. הגבלת אחריות קריטית (כשרות וזמני פעילות)</h3>
                     <p class="font-medium text-slate-800">המידע המוצג באתר KosherGo מבוסס על נתונים שנאספו מבעלי העסקים, מפרסומים ברשת או מגולשים, והוא מוצג "כפי שהוא" (AS IS). <br><br>
