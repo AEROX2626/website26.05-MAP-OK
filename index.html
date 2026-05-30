@@ -589,6 +589,10 @@
         let placesDatabase = [];
         let favorites = [];
         let featuredWeeklyPlaceId = null; 
+        
+        // FIX 2 & 4: נוספו משתנים למעקב אחרי העמוד הנוכחי והיסטוריה
+        let currentModalPlaceId = null;
+        let isNavigating = false;
 
         // 5 הגושים הראשיים
         const israelRegionsMap = {
@@ -689,6 +693,19 @@
             }, 1200);
         });
 
+        // FIX 4: מאזין לכפתור חזור בדפדפן
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeId = urlParams.get('place');
+            if (placeId && placesDatabase.some(p => p.id === placeId)) {
+                isNavigating = true;
+                openPlaceDetails(placeId);
+                isNavigating = false;
+            } else {
+                executeCloseModalUI();
+            }
+        });
+
         function handleLogoClick() {
             activeCategory = 'all';
             activeCity = 'all';
@@ -762,11 +779,13 @@
                     if (seg.includes(`יום ${ds[d]}`) || seg.includes(`יום ${fds[d]}`) || seg.includes(fds[d])) return true;
                     if (new RegExp(`(?:^|[\\s:,-])${ds[d]}(?:[\\s:,-]|$)`).test(seg)) return true;
                 }
+                
+                // FIX 3: תיקון באג זיהוי יום שישי ושבת (שימוש ברגקס במקום זיהוי אות בודדת)
                 if (d === 5) {
-                    if (seg.includes("ו") || seg.includes("שישי") || seg.includes("ערב שבת") || seg.includes("ושישי")) return true;
+                    if (seg.includes("שישי") || seg.includes("ערב שבת") || seg.includes("ושישי") || /(?:^|[\s,])ו(?:[\s,:-]|$)/.test(seg)) return true;
                 }
                 if (d === 6) {
-                    if (seg.includes("ש") || seg.includes("שבת") || seg.includes("מוצש")) return true;
+                    if (seg.includes("שבת") || seg.includes("מוצש") || /(?:^|[\s,])ש(?:[\s,:-]|$)/.test(seg)) return true;
                 }
                 return false;
             };
@@ -897,6 +916,17 @@
                 updateWeeklyFeatured();
                 initMaps();
                 resolveCoordinatesForPlaces();
+                
+                // FIX 4: פתיחת מסעדה ישירות מהקישור במידה וקיים
+                setTimeout(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const placeIdToOpen = urlParams.get('place');
+                    if (placeIdToOpen && placesDatabase.some(p => p.id === placeIdToOpen)) {
+                        isNavigating = true;
+                        openPlaceDetails(placeIdToOpen);
+                        isNavigating = false;
+                    }
+                }, 500);
                 
             } catch (error) {
                 console.error("Failed to load sheet data:", error);
@@ -1126,6 +1156,11 @@
                 `;
                 carousel.appendChild(card);
             });
+            
+            // FIX 1: הוספת מרווח שקוף (Spacer) בסוף הרשימה שיפתור את בעיית החיתוך בגלילה במובייל
+            const spacer = document.createElement('div');
+            spacer.className = "shrink-0 w-4 md:hidden";
+            carousel.appendChild(spacer);
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -1512,6 +1547,16 @@
         function openPlaceDetails(id) {
             const place = placesDatabase.find(p => p.id === id);
             if (!place) return;
+            
+            // FIX 2 & 4: עדכון היסטוריה ושמירת העמוד הנוכחי למטרת השיתוף
+            currentModalPlaceId = id;
+            if (!isNavigating) {
+                try {
+                    history.pushState({ modal: 'placeDetails' }, "", "?place=" + id);
+                } catch (e) {
+                    console.warn("History API not supported in this environment.");
+                }
+            }
 
             injectRestaurantSchema(place);
 
@@ -1807,21 +1852,46 @@
             updateSliderImage();
         }
 
-        function closeDetailsModal() {
+        // FIX 4: פונקציה מסייעת חדשה לסגירת ממשק משתמש של עמוד המסעדה
+        function executeCloseModalUI() {
             const container = document.getElementById('detailPageContainer');
-            container.classList.add('pointer-events-none', 'opacity-0');
-            
-            document.body.classList.remove('overflow-hidden');
-            
-            const dynamicSchema = document.getElementById('dynamic-restaurant-schema');
-            if (dynamicSchema) {
-                dynamicSchema.remove();
+            if (container) {
+                container.classList.add('pointer-events-none', 'opacity-0');
+                document.body.classList.remove('overflow-hidden');
+                
+                const dynamicSchema = document.getElementById('dynamic-restaurant-schema');
+                if (dynamicSchema) {
+                    dynamicSchema.remove();
+                }
+                
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                    container.classList.remove('flex');
+                }, 300);
             }
-            
-            setTimeout(() => {
-                container.classList.add('hidden');
-                container.classList.remove('flex');
-            }, 300);
+        }
+
+        // FIX 4: עדכון הפונקציה כך שתתמוך בסנכרון עם הדפדפן
+        function closeDetailsModal() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('place')) {
+                    // אם פתחנו בעצמנו את החלון, היסטוריית הדפדפן מכילה סטייט ונוכל ללכת אחורה
+                    if (history.state && history.state.modal === 'placeDetails') {
+                        history.back();
+                    } else {
+                        // הגענו מקישור ישיר, ננקה את שורת הכתובת ונסגור רק את ממשק המשתמש כדי לא לצאת מהאתר
+                        try {
+                            history.pushState(null, "", window.location.pathname);
+                        } catch (e) {}
+                        executeCloseModalUI();
+                    }
+                } else {
+                    executeCloseModalUI();
+                }
+            } catch (e) {
+                executeCloseModalUI();
+            }
         }
 
         function toggleFavoriteFromModal() {
@@ -1841,19 +1911,21 @@
         function shareRestaurant() {
             const name = document.getElementById('modalName').innerText;
             const address = document.getElementById('modalAddress').innerText;
+            // FIX 2: עדכון של כתובת ה-URL שתשתף את המסעדה הספציפית ולא רק את דף הבית
+            const shareUrl = window.location.origin + window.location.pathname + '?place=' + currentModalPlaceId;
             const shareText = `היי, מצאתי מסעדה כשרה מעולה ב-KosherGo!\n📍 ${name}\n🗺️ כתובת: ${address}`;
             
             if (navigator.share) {
                 navigator.share({
                     title: `KosherGo - ${name}`,
                     text: shareText,
-                    url: window.location.href
+                    url: shareUrl
                 }).then(() => {
                     showToast("שותף בהצלחה!", "success");
                 }).catch((error) => console.log('Error sharing', error));
             } else {
                 const el = document.createElement('textarea');
-                el.value = `${shareText}\n${window.location.href}`;
+                el.value = `${shareText}\n${shareUrl}`;
                 document.body.appendChild(el);
                 el.select();
                 document.execCommand('copy');
