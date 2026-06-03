@@ -140,6 +140,7 @@
         .gm-style-iw-d {
             overflow: hidden !important;
         }
+        /* כפתור סגירה */
         button.gm-ui-hover-effect {
             top: 2px !important;
             right: 2px !important;
@@ -394,7 +395,7 @@
                         <i class="fa-solid fa-map-location-dot"></i>
                     </div>
                     <h3 class="text-lg font-black text-slate-900 mb-2">מפת המסעדות</h3>
-                    <p class="text-sm text-slate-700 font-bold mb-6">לחצו כדי לטעון את המפה ולחסוך בנתונים</p>
+                    <p class="text-sm text-slate-700 font-bold mb-6">לחצו כדי לצפות במסעדות על המפה</p>
                     <button onclick="activateDesktopMap()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2">
                         <i class="fa-solid fa-map"></i>
                         <span>הצג מפה אינטראקטיבית</span>
@@ -416,7 +417,7 @@
             <p class="text-xs text-slate-400 font-medium">© <script>document.write(new Date().getFullYear())</script> KosherGo. כל הזכויות שמורות.</p>
             <p class="text-[10px] text-slate-400 mt-2 max-w-xl mx-auto">
                 <i class="fa-solid fa-circle-info text-amber-500 ml-1"></i>
-                המידע המוצג באתר מבוסס על נתוני בתי העסק ואינו מהווה פסיקה הלכתית. האחריות הבלעדית לווידאו תעודת הכשרות ותוקפה חלה על המשתמש מול בית העסק.
+                המחשב המוצג באתר מבוסס על נתוני בתי העסק ואינו מהווה פסיקה הלכתית. האחריות הבלעדית לווידאו תעודת הכשרות ותוקפה חלה על המשתמש מול בית העסק.
             </p>
         </div>
     </footer>
@@ -496,7 +497,7 @@
                 </div>
             </a>
 
-            <button id="modalFavBtn" onclick="toggleFavoriteFromModal()" class="text-rose-500 p-2 hover:bg-rose-50 rounded-full transition-colors">
+            <button id="modalFavBtn" onclick="toggleFavoriteFromModal()" class="p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none">
                 <i id="modalFavIcon" class="fa-regular fa-heart text-xl"></i>
             </button>
         </div>
@@ -612,7 +613,17 @@
                         <i class="fa-solid fa-map-location-dot wolt-text-cyan"></i>
                         <span>מיקום המסעדה במפה</span>
                     </h3>
-                    <div id="modalSpecificMap" class="w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-sm border border-slate-200 z-10 relative"></div>
+                    <div id="modalSpecificMap" class="w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-sm border border-slate-200 z-10 relative bg-slate-100 flex items-center justify-center">
+                        <div id="modalMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center z-20">
+                            <div class="absolute inset-0 bg-white/70 backdrop-blur-sm"></div>
+                            <div class="relative z-30 flex flex-col items-center p-4 text-center">
+                                <button onclick="activateModalMap()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2 px-5 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2 text-xs">
+                                    <i class="fa-solid fa-map"></i>
+                                    <span>הצג מפה אינטראקטיבית</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <section class="pt-4 border-t border-slate-100">
@@ -1408,9 +1419,6 @@
                 document.getElementById('locationBtnText'),
                 document.getElementById('bookingGeoText')
             ];
-            
-            // הסרנו את קריאת ברירת המחדל ל-API המפות כאן:
-            // if (!isAutoPrompt) { loadGoogleMapsAPI(); }
 
             try {
                 if (!navigator.geolocation) {
@@ -1814,8 +1822,6 @@
         }
 
         function openPlaceDetails(id) {
-            loadGoogleMapsAPI(); 
-            
             const place = placesDatabase.find(p => p.id === id);
             if (!place) return;
             
@@ -1886,7 +1892,6 @@
                 img.loading = "lazy";
                 img.decoding = "async";
                 img.alt = `תמונה של ${place.name} - ${idx+1}`;
-                // Tweak: Changed inactive border-transparent to border-slate-200 for better visibility on white bg
                 img.className = `h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 ${idx === currentGalleryIndex ? 'border-brand-500 ring-2 ring-brand-500/50 opacity-100' : 'border-slate-200 opacity-60 hover:opacity-100'}`;
                 img.onclick = () => {
                     currentGalleryIndex = idx;
@@ -1897,57 +1902,72 @@
 
             renderRelatedPlaces(place);
 
-            function tryInitModalMap() {
-                if (typeof google === 'undefined') {
-                    setTimeout(tryInitModalMap, 200);
-                    return;
+            // איפוס והצגת הפלייסחולדר מחדש בכל פתיחת חלונית מסעדה
+            const modalPlaceholder = document.getElementById('modalMapPlaceholder');
+            if (modalPlaceholder) {
+                modalPlaceholder.style.display = 'flex';
+                const modalBtn = modalPlaceholder.querySelector('button');
+                if (modalBtn) {
+                    modalBtn.innerHTML = '<i class="fa-solid fa-map"></i><span>הצג מפה אינטראקטיבית</span>';
+                    modalBtn.className = 'bg-brand-500 hover:bg-brand-600 text-white font-bold py-2.5 px-5 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2 text-xs';
                 }
-                
-                if (!detailModalMapInstance) {
-                    detailModalMapInstance = new google.maps.Map(document.getElementById('modalSpecificMap'), {
-                        zoom: 16,
-                        mapTypeControl: false,
-                        streetViewControl: false,
-                        fullscreenControl: true,
-                        gestureHandling: 'cooperative', 
-                        zoomControl: true 
-                    });
-                    detailModalMarker = new google.maps.Marker({
-                        map: detailModalMapInstance
-                    });
-                    detailModalMapInstance.infowindow = new google.maps.InfoWindow();
+            }
 
-                    if (!detailModalMapInstance.myLocBtnAdded) {
-                        const locBtnWrapper = document.createElement('div');
-                        locBtnWrapper.style.margin = '10px';
-                        
-                        const locBtn = document.createElement('button');
-                        locBtn.className = 'bg-white w-10 h-10 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] flex items-center justify-center text-slate-700 hover:text-[#00c2e8] transition-colors border border-slate-100 outline-none';
-                        locBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs text-lg"></i>';
-                        locBtn.title = 'המיקום שלי';
-                        
-                        locBtn.onclick = () => {
-                            if (userCoords) {
-                                detailModalMapInstance.setCenter(userCoords);
-                                detailModalMapInstance.setZoom(16);
-                            } else {
-                                requestUserLocation(false);
-                                setTimeout(() => {
-                                    if (userCoords) {
-                                        detailModalMapInstance.setCenter(userCoords);
-                                        detailModalMapInstance.setZoom(16);
-                                    }
-                                }, 1500);
-                            }
-                        };
-                        
-                        locBtnWrapper.appendChild(locBtn);
-                        detailModalMapInstance.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locBtnWrapper);
-                        detailModalMapInstance.myLocBtnAdded = true;
-                    }
+            window.activateModalMap = function() {
+                const placeholder = document.getElementById('modalMapPlaceholder');
+                const btn = placeholder.querySelector('button');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>טוען מפה...</span>';
+                    btn.classList.add('opacity-80', 'cursor-not-allowed');
                 }
-                
-                setTimeout(() => {
+
+                loadGoogleMapsAPI().then(() => {
+                    if (placeholder) placeholder.style.display = 'none';
+                    
+                    if (!detailModalMapInstance) {
+                        detailModalMapInstance = new google.maps.Map(document.getElementById('modalSpecificMap'), {
+                            zoom: 16,
+                            mapTypeControl: false,
+                            streetViewControl: false,
+                            fullscreenControl: true,
+                            gestureHandling: 'cooperative', 
+                            zoomControl: true 
+                        });
+                        detailModalMarker = new google.maps.Marker({
+                            map: detailModalMapInstance
+                        });
+                        detailModalMapInstance.infowindow = new google.maps.InfoWindow();
+
+                        if (!detailModalMapInstance.myLocBtnAdded) {
+                            const locBtnWrapper = document.createElement('div');
+                            locBtnWrapper.style.margin = '10px';
+                            
+                            const locBtn = document.createElement('button');
+                            locBtn.className = 'bg-white w-10 h-10 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] flex items-center justify-center text-slate-700 hover:text-[#00c2e8] transition-colors border border-slate-100 outline-none';
+                            locBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs text-lg"></i>';
+                            locBtn.title = 'המיקום שלי';
+                            
+                            locBtn.onclick = () => {
+                                if (userCoords) {
+                                    detailModalMapInstance.setCenter(userCoords);
+                                    detailModalMapInstance.setZoom(16);
+                                } else {
+                                    requestUserLocation(false);
+                                    setTimeout(() => {
+                                        if (userCoords) {
+                                            detailModalMapInstance.setCenter(userCoords);
+                                            detailModalMapInstance.setZoom(16);
+                                        }
+                                    }, 1500);
+                                }
+                            };
+                            
+                            locBtnWrapper.appendChild(locBtn);
+                            detailModalMapInstance.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locBtnWrapper);
+                            detailModalMapInstance.myLocBtnAdded = true;
+                        }
+                    }
+                    
                     google.maps.event.trigger(detailModalMapInstance, 'resize');
                     detailModalMapInstance.setCenter(place.coords);
                     
@@ -1984,9 +2004,7 @@
                     `;
                     
                     detailModalMapInstance.infowindow.setContent(markerHtml);
-                    
                     google.maps.event.clearListeners(detailModalMarker, 'click');
-                    
                     detailModalMarker.addListener('click', () => {
                         detailModalMapInstance.infowindow.open(detailModalMapInstance, detailModalMarker);
                     });
@@ -2007,109 +2025,25 @@
                         }
                         window.userMarkerDetail.setPosition(userCoords);
                     }
-                }, 100);
-            }
-            tryInitModalMap();
-
-            const reviewsContainer = document.getElementById('modalReviewsContainer');
-            reviewsContainer.innerHTML = '';
-            
-            const colors = [
-                "bg-sky-100 text-sky-800 border-sky-200", 
-                "bg-emerald-100 text-emerald-800 border-emerald-200", 
-                "bg-amber-100 text-amber-800 border-amber-200", 
-                "bg-indigo-100 text-indigo-800 border-indigo-200", 
-                "bg-rose-100 text-rose-800 border-rose-200"
-            ];
-            
-            const parsedReviews = parseReviewText(place.reviews);
-            let goodReviews = [];
-            let badReviews = [];
-            
-            parsedReviews.forEach(rev => {
-                let s10 = (rev.rating * 2).toFixed(1);
-                rev.score10 = s10;
-                if (parseFloat(s10) >= 6.0) {
-                    goodReviews.push(rev);
-                } else {
-                    badReviews.push(rev);
-                }
-            });
-
-            let finalReviewsToShow = [];
-            
-            if (goodReviews.length >= 2 && badReviews.length >= 1) {
-                finalReviewsToShow = [goodReviews[0], goodReviews[1], badReviews[0]];
-            } else if (parsedReviews.length >= 3) {
-                let thirdRev = parsedReviews[2];
-                if (parseFloat(thirdRev.score10) >= 6.0) {
-                    thirdRev.score10 = "5.5"; 
-                }
-                finalReviewsToShow = [parsedReviews[0], parsedReviews[1], thirdRev];
-            } else {
-                finalReviewsToShow = parsedReviews; 
-            }
-            
-            if (finalReviewsToShow.length === 0) {
-                reviewsContainer.innerHTML = `
-                    <div class="text-center py-8 text-slate-400 text-sm font-semibold">
-                        טרם התקבלו חוות דעת למקום זה.
-                    </div>
-                `;
-            } else {
-                finalReviewsToShow.forEach((review, i) => {
-                    const randomColor = colors[i % colors.length];
-                    const firstChar = review.author ? review.author.charAt(0) : "מ";
-                    const revDiv = document.createElement('div');
-                    
-                    const reviewFormattedScore = review.score10 ? review.score10 : "10.0";
-
-                    const maxLength = 240;
-                    const isLong = review.text.length > maxLength;
-                    const displayShortText = isLong ? review.text.substring(0, maxLength) + "..." : review.text;
-
-                    revDiv.className = "bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all flex flex-col gap-4 text-right";
-                    revDiv.innerHTML = `
-                        <div class="flex justify-between items-start w-full">
-                            <div class="flex items-center gap-3 flex-1 min-w-0">
-                                <div class="w-10 h-10 rounded-full ${randomColor} border font-black flex items-center justify-center text-sm shrink-0">
-                                    ${firstChar}
-                                </div>
-                                <div class="min-w-0">
-                                    <span class="font-bold text-slate-900 text-sm block truncate">${review.author}</span>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                        <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0">
-                                            <i class="fa-solid fa-check"></i> סועד מאומת
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-black text-sm shadow-sm shrink-0 mr-3">
-                                ${reviewFormattedScore}
-                            </div>
-                        </div>
-                        <div class="text-slate-700 font-medium text-sm leading-relaxed">
-                            <p id="review-text-${i}" class="whitespace-pre-line">${displayShortText}</p>
-                            ${isLong ? `
-                            <button onclick="toggleLongReview(${i}, this)" data-fulltext="${encodeURIComponent(review.text).replace(/'/g, "%27")}" class="text-brand-500 hover:text-brand-600 text-xs font-black mt-2 inline-flex items-center gap-1 transition-colors outline-none focus:ring-0">
-                                <span>קרא עוד</span>
-                                <i class="fa-solid fa-chevron-down text-[9px] transition-transform"></i>
-                            </button>
-                            ` : ''}
-                        </div>
-                    `;
-                    reviewsContainer.appendChild(revDiv);
+                }).catch(err => {
+                    console.error("Failed to load maps API inside modal", err);
+                    if (btn) {
+                        btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>שגיאה בטעינה</span>';
+                        btn.className = 'bg-rose-500 text-white font-bold py-2 px-4 rounded-xl shadow-sm text-xs';
+                    }
                 });
-            }
+            };
 
             const isFav = favorites.includes(place.id);
             const modalFavIcon = document.getElementById('modalFavIcon');
+            const modalFavBtn = document.getElementById('modalFavBtn');
             if (isFav) {
-                modalFavIcon.className = "fa-solid fa-heart text-rose-600 text-lg animate-bounce";
+                modalFavIcon.className = "fa-solid fa-heart text-rose-600 text-xl animate-bounce";
+                modalFavBtn.className = "text-rose-600 p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none";
             } else {
-                modalFavIcon.className = "fa-regular fa-heart text-lg";
+                modalFavIcon.className = "fa-regular fa-heart text-slate-400 text-xl";
+                modalFavBtn.className = "text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none";
             }
-            document.getElementById('modalFavBtn').setAttribute('data-active-id', place.id);
 
             const container = document.getElementById('detailPageContainer');
             container.classList.remove('hidden');
@@ -2214,7 +2148,6 @@
                     thumb.className = "h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 border-white opacity-100 shadow-md";
                     thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 } else {
-                    // Tweak: Changed inactive border-transparent to border-transparent opacity-50 for dark bg
                     thumb.className = "h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 border-transparent opacity-50 hover:opacity-100";
                 }
             });
@@ -2272,15 +2205,18 @@
         }
 
         function toggleFavoriteFromModal() {
-            const activeId = document.getElementById('modalFavBtn').getAttribute('data-active-id');
-            if (activeId) {
-                toggleFavorite(activeId);
-                const isFav = favorites.includes(activeId);
+            if (currentModalPlaceId) {
+                toggleFavorite(currentModalPlaceId);
+                const isFav = favorites.includes(currentModalPlaceId);
                 const modalFavIcon = document.getElementById('modalFavIcon');
+                const modalFavBtn = document.getElementById('modalFavBtn');
+                
                 if (isFav) {
-                    modalFavIcon.className = "fa-solid fa-heart text-rose-600 text-lg animate-bounce";
+                    modalFavIcon.className = "fa-solid fa-heart text-rose-600 text-xl animate-bounce";
+                    modalFavBtn.className = "text-rose-600 p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none";
                 } else {
-                    modalFavIcon.className = "fa-regular fa-heart text-lg";
+                    modalFavIcon.className = "fa-regular fa-heart text-slate-400 text-xl";
+                    modalFavBtn.className = "text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none";
                 }
             }
         }
@@ -2643,6 +2579,12 @@
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
+
+                // הפעלה אוטומטית וחכמה של המפה אם הגולש בחר לנווט אליה ישירות מראש המודאל
+                const placeholder = document.getElementById('modalMapPlaceholder');
+                if (placeholder && placeholder.style.display !== 'none' && typeof window.activateModalMap === 'function') {
+                    window.activateModalMap();
+                }
             }
         }
 
@@ -2805,19 +2747,16 @@
             document.documentElement.classList.remove('overflow-hidden');
         }
 
-        // --- תיקון לבעיית תמונות נעלמות בספארי/מובייל לאחר שהייה ממושכת ברקע ---
         let lastVisibilityHiddenTime = 0;
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') {
                 lastVisibilityHiddenTime = Date.now();
             } else if (document.visibilityState === 'visible') {
                 const timeHidden = Date.now() - lastVisibilityHiddenTime;
-                // אם האתר היה ברקע יותר מחצי שעה (1,800,000 מילישניות) - נמשוך ונדר את הנתונים והתמונות מחדש בשקט
                 if (lastVisibilityHiddenTime > 0 && timeHidden > 1800000) {
                     fetchPlaces();
                     lastVisibilityHiddenTime = 0;
                 } else {
-                    // זמן קצר: כפיית CSS Reflow עדין שעוזר לספארי לצייר מחדש תמונות שלפעמים הופכות ללבנות
                     const images = document.querySelectorAll('img');
                     images.forEach(img => {
                         const original = img.style.transform;
