@@ -386,7 +386,22 @@
             </h2>
             <span class="text-xs text-slate-500 font-bold">לחצו על הסיכות לקבלת מידע מהיר</span>
         </div>
-        <div id="desktopMap" class="w-full h-[400px] rounded-3xl shadow-md border border-slate-200 relative overflow-hidden z-10"></div>
+        <div id="desktopMap" class="w-full h-[400px] rounded-3xl shadow-md border border-slate-200 relative overflow-hidden z-10 bg-slate-100 flex items-center justify-center">
+            <div id="desktopMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center z-20">
+                <div class="absolute inset-0 bg-white/70 backdrop-blur-sm"></div>
+                <div class="relative z-30 flex flex-col items-center p-6 text-center">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4 text-brand-500 text-3xl">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-900 mb-2">מפת המסעדות</h3>
+                    <p class="text-sm text-slate-700 font-bold mb-6">לחצו כדי לטעון את המפה ולחסוך בנתונים</p>
+                    <button onclick="activateDesktopMap()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-map"></i>
+                        <span>הצג מפה אינטראקטיבית</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer class="bg-white border-t border-slate-100 pt-8 pb-24 md:pb-8 mt-auto">
@@ -460,9 +475,9 @@
         </div>
     </div>
 
-    <div id="detailPageContainer" class="fixed inset-0 z-[150] bg-white hidden overflow-y-auto page-transition opacity-0 pointer-events-none flex-col">
+    <div id="detailPageContainer" class="fixed inset-0 z-[150] bg-[#fcfdfe] hidden overflow-y-auto page-transition opacity-0 pointer-events-none flex-col">
         
-        <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 h-14 px-4 flex items-center justify-between shrink-0 z-50">
+        <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 h-14 px-4 flex items-center justify-between shrink-0 z-[70]">
             <button onclick="closeDetailsModal()" class="text-slate-800 font-black flex items-center gap-1.5 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs transition-colors">
                 <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
                 <span>חזרה</span>
@@ -486,11 +501,12 @@
             </button>
         </div>
 
-        <article class="max-w-4xl mx-auto w-full flex-1 flex flex-col pb-10">
-            <div class="shrink-0 bg-slate-900 flex flex-col">
-                <header class="h-64 sm:h-96 relative group overflow-hidden">
+        <article class="max-w-4xl mx-auto w-full flex-1 flex flex-col pb-24 relative">
+            
+            <div class="shrink-0 bg-slate-900 relative flex flex-col">
+                <header class="h-56 sm:h-72 relative group overflow-hidden">
                     <img id="modalMainImage" src="" alt="תמונה ראשית של המסעדה" class="w-full h-full object-cover transition-opacity duration-300 cursor-pointer" onclick="nextSliderImage()" title="לחצו להחלפת תמונה">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent pointer-events-none"></div>
                     
                     <button onclick="prevSliderImage(event)" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg active:scale-95 z-20" aria-label="תמונה קודמת">
                         <i class="fa-solid fa-chevron-left text-lg"></i>
@@ -498,102 +514,84 @@
                     <button onclick="nextSliderImage(event)" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg active:scale-95 z-20" aria-label="תמונה הבאה">
                         <i class="fa-solid fa-chevron-right text-lg"></i>
                     </button>
-                    
-                    <div class="absolute bottom-4 right-4 text-white left-4 flex flex-col gap-1.5 text-right pointer-events-none">
-                        <div class="flex flex-wrap gap-1.5">
+                </header>
+                
+                <div class="px-4 py-3 bg-slate-900 pb-8">
+                    <div id="modalGalleryContainer" class="flex gap-2.5 overflow-x-auto no-scrollbar scroll-smooth"></div>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-white rounded-t-3xl -mt-6 relative z-20 px-4 sm:px-6 pt-6 pb-6 flex flex-col gap-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+                
+                <div class="flex justify-between items-start gap-3">
+                    <div class="flex-1">
+                        <div class="flex flex-wrap gap-1.5 mb-2">
                             <span id="modalCategoryBadge" class="text-[10px] font-black uppercase bg-brand-500 text-white px-2.5 py-1 rounded-md"></span>
                             <span id="modalKosherBadge" class="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-2.5 py-1 rounded-md"></span>
                             <span id="modalStyleBadge" class="text-[10px] font-black uppercase bg-emerald-600 text-white px-2.5 py-1 rounded-md"></span>
                         </div>
-                        <h2 id="modalName" class="text-2xl sm:text-3xl font-black text-white drop-shadow-md leading-tight"></h2>
+                        <h2 id="modalName" class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight"></h2>
                     </div>
-                </header>
-
-                <div class="px-4 py-3 bg-slate-950 border-t border-slate-800/80">
-                    <div id="modalGalleryContainer" class="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar scroll-smooth"></div>
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-6 lg:p-8 space-y-6 text-right bg-white">
-                
-                <div class="flex flex-col md:flex-row md:items-start justify-between gap-5 border-b border-slate-100 pb-6">
-                    <div class="flex-1 space-y-3">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <section id="modalStatusBadge" class="flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm transition-all">
-                                <i class="fa-solid fa-clock"></i>
-                                <span id="modalStatusText">בודק סטטוס פעילות...</span>
-                            </section>
+                    
+                    <div class="flex items-center gap-2 bg-brand-50/60 p-2 rounded-2xl border border-brand-100 shrink-0">
+                        <div class="text-left hidden sm:block">
+                            <div id="modalRatingLabel" class="text-sm font-black text-slate-900"></div>
+                            <div id="modalRatingCount" class="text-[10px] font-semibold text-brand-700 mt-0.5"></div>
                         </div>
-                        
-                        <div class="flex items-start gap-2 text-slate-600 text-sm font-medium mt-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <i class="fa-solid fa-location-dot text-brand-500 mt-1"></i>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-brand-500 text-white rounded-xl flex items-center justify-center font-black text-lg sm:text-xl shadow-md">
+                            <span id="modalRatingScore"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <section id="modalStatusBadge" class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm w-fit transition-all">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="modalStatusText">בודק סטטוס פעילות...</span>
+                    </section>
+                    
+                    <div class="flex flex-col gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                        <div class="flex items-start gap-2 text-slate-600 text-sm font-medium">
+                            <i class="fa-solid fa-location-dot text-rose-500 mt-1"></i>
                             <span id="modalAddressDisplay" class="leading-relaxed"></span>
                         </div>
-                    </div>
-
-                    <div class="flex items-center gap-3 bg-brand-50/40 p-3 rounded-2xl border border-brand-100/50 shrink-0">
-                        <div class="text-left">
-                            <div id="modalRatingLabel" class="text-sm font-black text-slate-900">טוב מאוד</div>
-                            <div id="modalRatingCount" class="text-xs text-slate-500 font-semibold mt-0.5">0 חוות דעת</div>
-                        </div>
-                        <div class="w-12 h-12 bg-brand-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">
-                            <span id="modalRatingScore">10</span>
+                        <div class="pr-6">
+                            <button id="modalMapNavigateBtn" onclick="navigateToMapFromModal()" class="inline-flex items-center gap-1.5 text-brand-600 font-bold text-xs hover:text-brand-700 bg-brand-50/50 hover:bg-brand-50 py-1 px-2.5 rounded-lg transition-colors active:scale-95 border border-brand-100/50">
+                                <i class="fa-solid fa-map"></i>
+                                <span>הצג במפה</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 sm:gap-3">
-                    <div class="flex flex-col items-center justify-center gap-1.5 bg-white border border-slate-100 shadow-sm p-3 rounded-2xl text-center transition-shadow">
-                        <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-certificate text-emerald-500 text-sm"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">כשרות</span>
-                            <span id="gridKosherType" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                        </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+                        <i class="fa-solid fa-certificate text-emerald-500 text-base"></i>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">כשרות</span>
+                        <span id="gridKosherType" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
                     </div>
                     
-                    <div class="flex flex-col items-center justify-center gap-1.5 bg-white border border-slate-100 shadow-sm p-3 rounded-2xl text-center transition-shadow">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-utensils text-blue-500 text-sm"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">סוג מקום</span>
-                            <span id="gridCategory" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                        </div>
+                    <div class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+                        <i class="fa-solid fa-utensils text-blue-500 text-base"></i>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">סוג מקום</span>
+                        <span id="gridCategory" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
                     </div>
                     
-                    <div class="flex flex-col items-center justify-center gap-1.5 bg-white border border-slate-100 shadow-sm p-3 rounded-2xl text-center transition-shadow">
-                        <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-location-arrow text-rose-500 text-sm"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">מרחק</span>
-                            <span id="gridDistance" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                        </div>
+                    <div class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+                        <i class="fa-solid fa-location-arrow text-rose-500 text-base"></i>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">מרחק</span>
+                        <span id="gridDistance" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
                     </div>
                 </div>
 
-                <nav class="grid grid-cols-4 gap-2.5 my-6" aria-label="פעולות למסעדה">
-                    <a id="modalWazeBtn" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1.5 bg-[#00c2e8] hover:bg-[#00adc0] text-white text-[10px] sm:text-xs font-black py-3 px-1 rounded-2xl transition-all shadow-[0_4px_14px_rgba(0,194,232,0.25)] active:scale-[0.96]">
-                        <i class="fa-brands fa-waze text-lg sm:text-xl"></i>
-                        <span>Waze</span>
-                    </a>
-                    <a id="modalPhoneBtn" href="#" class="flex flex-col items-center justify-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] sm:text-xs font-black py-3 px-1 rounded-2xl transition-all shadow-[0_4px_14px_rgba(16,185,129,0.25)] active:scale-[0.96]">
-                        <i class="fa-solid fa-phone text-lg sm:text-xl"></i>
-                        <span>התקשרו</span>
-                    </a>
-                    <button id="modalMapNavigateBtn" onclick="navigateToMapFromModal()" class="flex flex-col items-center justify-center gap-1.5 bg-[#e2f8fd] text-[#009ebd] hover:bg-[#cbf1f9] text-[10px] sm:text-xs font-black py-3 px-1 rounded-2xl transition-all active:scale-[0.96]">
-                        <i class="fa-solid fa-map-location-dot text-lg sm:text-xl"></i>
-                        <span>במפה</span>
+                <div class="flex gap-2 pt-2 border-t border-slate-100">
+                    <button id="modalShareBtn" onclick="shareRestaurant()" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-3 px-4 rounded-xl transition-all active:scale-95 w-full">
+                        <i class="fa-solid fa-share-nodes text-base"></i>
+                        <span>שתף מסעדה עם חברים</span>
                     </button>
-                    <button id="modalShareBtn" onclick="shareRestaurant()" class="flex flex-col items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] sm:text-xs font-black py-3 px-1 rounded-2xl transition-all active:scale-[0.96]">
-                        <i class="fa-solid fa-share-nodes text-lg sm:text-xl"></i>
-                        <span>שיתוף</span>
-                    </button>
-                </nav>
+                </div>
 
-                <section class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-right">
+                <section class="bg-brand-50/30 p-4 rounded-2xl border border-brand-100 text-right mt-2">
                     <h3 class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-2">
                         <i class="fa-solid fa-clock text-brand-500"></i>
                         <span>שעות פעילות</span>
@@ -601,24 +599,24 @@
                     <p id="modalHours" class="font-medium text-slate-600 text-xs leading-relaxed whitespace-pre-line"></p>
                 </section>
 
-                <section class="space-y-4">
-                    <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <section class="space-y-4 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-black text-slate-950 flex items-center gap-2">
                         <i class="fa-solid fa-comments wolt-text-cyan"></i>
                         <span>חוות דעת של מבקרים</span>
                     </h3>
-                    <div id="modalReviewsContainer" class="flex flex-col gap-6"></div>
+                    <div id="modalReviewsContainer" class="flex flex-col gap-4"></div>
                 </section>
 
-                <section class="pt-4 pb-2">
-                    <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
+                <section class="pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-black text-slate-950 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-map-location-dot wolt-text-cyan"></i>
                         <span>מיקום המסעדה במפה</span>
                     </h3>
                     <div id="modalSpecificMap" class="w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-sm border border-slate-200 z-10 relative"></div>
                 </section>
 
-                <section>
-                    <h3 class="text-sm font-black text-slate-950 border-b border-slate-100 pb-2 mb-3 flex items-center gap-2">
+                <section class="pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-black text-slate-950 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-utensils wolt-text-cyan"></i>
                         <span>עוד מסעדות באזור עבורך</span>
                     </h3>
@@ -627,6 +625,18 @@
 
             </div>
         </article>
+
+        <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-3 z-[200] shadow-[0_-10px_30px_rgba(0,0,0,0.08)]">
+            <a id="modalWazeBtn" href="#" target="_blank" class="flex-1 bg-[#00c2e8] hover:bg-[#00adc0] text-white text-sm sm:text-base font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(0,194,232,0.25)] active:scale-95 transition-all">
+                <i class="fa-brands fa-waze text-lg sm:text-xl"></i>
+                <span>ניווט ב-Waze</span>
+            </a>
+            <a id="modalPhoneBtn" href="#" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-sm sm:text-base font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(16,185,129,0.25)] active:scale-95 transition-all">
+                <i class="fa-solid fa-phone text-lg sm:text-xl"></i>
+                <span>התקשר למסעדה</span>
+            </a>
+        </div>
+
     </div>
 
     <div id="favoritesPanel" class="fixed inset-0 z-[120] overflow-hidden hidden">
@@ -683,6 +693,7 @@
         
         let isGoogleMapsLoading = false;
         let isGoogleMapsLoaded = false;
+        let googleMapsPromise = null;
 
         const SVG_PIN_DEFAULT = 'M 12 0 C 7.58 0 4 3.58 4 8 C 4 14 12 24 12 24 C 12 24 20 14 20 8 C 20 3.58 16.42 0 12 0 Z M 12 11 C 10.34 11 9 9.66 9 8 C 9 6.34 10.34 5 12 5 C 13.66 5 15 6.34 15 8 C 15 9.66 13.66 11 12 11 Z';
         const SVG_STAR_FAV = 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z';
@@ -705,31 +716,59 @@
         }
 
         function loadGoogleMapsAPI() {
-            if (isGoogleMapsLoaded || isGoogleMapsLoading) return;
+            if (isGoogleMapsLoaded) return Promise.resolve();
+            if (googleMapsPromise) return googleMapsPromise;
+
             isGoogleMapsLoading = true;
-            
-            const script = document.createElement('script');
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBYki5wubNCKvTqM1qQEqcPlMzdpmstaas&libraries=places&callback=onGoogleMapsLoaded";
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
+            googleMapsPromise = new Promise((resolve, reject) => {
+                window.onGoogleMapsLoaded = function() {
+                    isGoogleMapsLoaded = true;
+                    isGoogleMapsLoading = false;
+                    
+                    if (placesDatabase.length > 0) {
+                        initMaps();
+                        if (isShowingFavoritesOnly) {
+                            const favPlaces = placesDatabase.filter(p => favorites.includes(p.id));
+                            updateMapsMarkers(favPlaces);
+                        } else {
+                            renderPlaces(); 
+                        }
+                    }
+                    if (isGeoActive && userCoords) {
+                        requestUserLocation(true); 
+                    }
+                    resolve();
+                };
+
+                const script = document.createElement('script');
+                script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBYki5wubNCKvTqM1qQEqcPlMzdpmstaas&libraries=places&callback=onGoogleMapsLoaded";
+                script.async = true;
+                script.defer = true;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+
+            return googleMapsPromise;
         }
 
-        window.onGoogleMapsLoaded = function() {
-            isGoogleMapsLoaded = true;
-            isGoogleMapsLoading = false;
-            if (placesDatabase.length > 0) {
-                initMaps();
-                if (isShowingFavoritesOnly) {
-                    const favPlaces = placesDatabase.filter(p => favorites.includes(p.id));
-                    updateMapsMarkers(favPlaces);
-                } else {
-                    renderPlaces(); 
+        window.activateDesktopMap = function() {
+            const placeholder = document.getElementById('desktopMapPlaceholder');
+            const btn = placeholder.querySelector('button');
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>טוען מפה...</span>';
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+            }
+            
+            loadGoogleMapsAPI().then(() => {
+                if (placeholder) placeholder.style.display = 'none';
+                if (!desktopMapInstance) initMaps();
+            }).catch(err => {
+                console.error("Failed to load maps API", err);
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>שגיאה בטעינה</span>';
+                    btn.classList.replace('bg-brand-500', 'bg-rose-500');
                 }
-            }
-            if (isGeoActive && userCoords) {
-                requestUserLocation(true); 
-            }
+            });
         };
 
         function generateSlug(name) {
@@ -832,19 +871,6 @@
             setTimeout(() => {
                 requestUserLocation(true);
             }, 1200);
-
-            const mapSection = document.getElementById('desktopMapSection');
-            if (mapSection) {
-                const mapObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            loadGoogleMapsAPI();
-                            observer.disconnect();
-                        }
-                    });
-                }, { rootMargin: "300px" });
-                mapObserver.observe(mapSection);
-            }
         });
 
         window.addEventListener('popstate', (event) => {
@@ -1383,9 +1409,8 @@
                 document.getElementById('bookingGeoText')
             ];
             
-            if (!isAutoPrompt) {
-                loadGoogleMapsAPI(); 
-            }
+            // הסרנו את קריאת ברירת המחדל ל-API המפות כאן:
+            // if (!isAutoPrompt) { loadGoogleMapsAPI(); }
 
             try {
                 if (!navigator.geolocation) {
@@ -1843,7 +1868,7 @@
             const statusBadge = document.getElementById('modalStatusBadge');
             const statusText = document.getElementById('modalStatusText');
             statusText.innerText = status.text;
-            statusBadge.className = `flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm transition-all ${status.isOpen ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`;
+            statusBadge.className = `inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm w-fit transition-all ${status.isOpen ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`;
 
             document.getElementById('modalWazeBtn').href = `https://waze.com/ul?q=${encodeURIComponent(place.address)}`;
             document.getElementById('modalPhoneBtn').href = `tel:${place.phone}`;
@@ -1861,7 +1886,8 @@
                 img.loading = "lazy";
                 img.decoding = "async";
                 img.alt = `תמונה של ${place.name} - ${idx+1}`;
-                img.className = `h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 ${idx === currentGalleryIndex ? 'border-brand-500 ring-2 ring-brand-500/50 opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}`;
+                // Tweak: Changed inactive border-transparent to border-slate-200 for better visibility on white bg
+                img.className = `h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 ${idx === currentGalleryIndex ? 'border-brand-500 ring-2 ring-brand-500/50 opacity-100' : 'border-slate-200 opacity-60 hover:opacity-100'}`;
                 img.onclick = () => {
                     currentGalleryIndex = idx;
                     updateSliderImage();
@@ -2185,9 +2211,10 @@
             const thumbs = document.querySelectorAll('#modalGalleryContainer img');
             thumbs.forEach((thumb, idx) => {
                 if (idx === currentGalleryIndex) {
-                    thumb.className = "h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 border-brand-500 ring-2 ring-brand-500/50 opacity-100";
+                    thumb.className = "h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 border-white opacity-100 shadow-md";
                     thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 } else {
+                    // Tweak: Changed inactive border-transparent to border-transparent opacity-50 for dark bg
                     thumb.className = "h-16 w-24 sm:h-20 sm:w-28 shrink-0 object-cover rounded-xl cursor-pointer transition-all border-2 border-transparent opacity-50 hover:opacity-100";
                 }
             });
@@ -2642,27 +2669,28 @@
                 tabSearchBtn.classList.add('text-slate-400');
                 tabSearchBtn.classList.remove('text-brand-500');
                 
-                loadGoogleMapsAPI(); 
-                
-                function tryResizeMobileMap() {
-                    if (typeof google === 'undefined' || !mobileMapInstance) {
-                        setTimeout(tryResizeMobileMap, 200);
-                        return;
-                    }
-                    google.maps.event.trigger(mobileMapInstance, 'resize');
-                    
-                    if (!isShowingFavoritesOnly) {
-                        let targetCenter = { lat: 32.7610, lng: 34.9702 }; 
-                        if (userCoords) {
-                            targetCenter = userCoords;
-                        } else if (placesDatabase.length > 0) {
-                            targetCenter = placesDatabase[0].coords;
+                // שימוש ב-Promise כדי להזריק ולטעון את המפה במובייל
+                loadGoogleMapsAPI().then(() => {
+                    function tryResizeMobileMap() {
+                        if (typeof google === 'undefined' || !mobileMapInstance) {
+                            setTimeout(tryResizeMobileMap, 200);
+                            return;
                         }
-                        mobileMapInstance.setCenter(targetCenter);
-                        mobileMapInstance.setZoom(14);
+                        google.maps.event.trigger(mobileMapInstance, 'resize');
+                        
+                        if (!isShowingFavoritesOnly) {
+                            let targetCenter = { lat: 32.7610, lng: 34.9702 }; 
+                            if (userCoords) {
+                                targetCenter = userCoords;
+                            } else if (placesDatabase.length > 0) {
+                                targetCenter = placesDatabase[0].coords;
+                            }
+                            mobileMapInstance.setCenter(targetCenter);
+                            mobileMapInstance.setZoom(14);
+                        }
                     }
-                }
-                tryResizeMobileMap();
+                    tryResizeMobileMap();
+                });
             }
         }
 
