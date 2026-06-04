@@ -127,9 +127,11 @@
             border-radius: 8px;
             padding: 4px 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-38px);
+            margin-top: -8px; 
             white-space: nowrap;
             direction: rtl;
+            cursor: pointer !important;
+            pointer-events: auto !important;
         }
         /* כופה שימוש ברוביק גם בתוך חלוניות המידע של גוגל */
         .gm-style-iw-c, .gm-style-iw-d {
@@ -715,16 +717,41 @@
                 return {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgStar),
                     scaledSize: new google.maps.Size(36, 36),
-                    anchor: new google.maps.Point(18, 18)
+                    anchor: new google.maps.Point(18, 18),
+                    labelOrigin: new google.maps.Point(18, -12)
                 };
             }
             const svgPin = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34"><path fill="#00c2e8" stroke="#ffffff" stroke-width="1.5" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
             return {
                 url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgPin),
                 scaledSize: new google.maps.Size(34, 34),
-                anchor: new google.maps.Point(17, 34)
+                anchor: new google.maps.Point(17, 34),
+                labelOrigin: new google.maps.Point(17, -12) 
             };
         }
+
+        // --- תיקון: האזנה גלובלית ללחיצות על הלייבלים במפה במקום להסתמך רק על ה-Hit Area ---
+        document.addEventListener('click', function(e) {
+            const labelEl = e.target.closest('.map-custom-label');
+            if (labelEl) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const placeName = labelEl.textContent.trim();
+                const place = placesDatabase.find(p => p.name.trim() === placeName);
+                
+                if (place) {
+                    if (desktopMapInstance) {
+                        const dMarker = desktopMarkers.find(m => m.placeId === place.id);
+                        if (dMarker) google.maps.event.trigger(dMarker, 'click');
+                    }
+                    if (mobileMapInstance) {
+                        const mMarker = mobileMarkers.find(m => m.placeId === place.id);
+                        if (mMarker) google.maps.event.trigger(mMarker, 'click');
+                    }
+                }
+            }
+        });
 
         function loadGoogleMapsAPI() {
             if (isGoogleMapsLoaded) return Promise.resolve();
@@ -2299,10 +2326,15 @@
         }
 
         function toggleFavorite(id, e) {
-            if (e) e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             
             const idx = favorites.indexOf(id);
-            if (idx === -1) {
+            const isNowFav = idx === -1;
+            
+            if (isNowFav) {
                 favorites.push(id);
                 showToast("❤️ התווסף למועדפים שלך!", "success");
             } else {
@@ -2319,12 +2351,33 @@
                 if(favPlaces.length === 0) {
                     isShowingFavoritesOnly = false;
                     renderPlaces();
+                } else {
+                    renderPlaces(); 
                 }
             } else {
-                renderPlaces();
+                // -- תיקון: עדכון דינמי של האייקונים בלבד ללא רינדור מחדש של הגריד הראשי --
+                const classToAdd = isNowFav ? 'fa-solid' : 'fa-regular';
+                const classToRemove = isNowFav ? 'fa-regular' : 'fa-solid';
+                
+                document.querySelectorAll(`button[onclick*="toggleFavorite('${id}'"] i`).forEach(iEl => {
+                    if (iEl.id === 'modalFavIcon') return; 
+                    iEl.classList.remove(classToRemove);
+                    iEl.classList.add(classToAdd);
+                });
+
+                const newIcon = getMarkerIcon(isNowFav);
+                if (desktopMarkers) desktopMarkers.forEach(m => { if (m.placeId === id) m.setIcon(newIcon); });
+                if (mobileMarkers) mobileMarkers.forEach(m => { if (m.placeId === id) m.setIcon(newIcon); });
+                if (detailModalMarker && currentModalPlaceId === id) {
+                    detailModalMarker.setIcon(newIcon);
+                }
             }
             
-            renderFavoritesList();
+            // -- תיקון: מרנדר את רשימת המועדפים הצדדית רק אם היא אכן גלויה לעין --
+            const favPanel = document.getElementById('favoritesPanel');
+            if (favPanel && !favPanel.classList.contains('hidden')) {
+                renderFavoritesList();
+            }
         }
 
         function updateFavoritesBadge() {
