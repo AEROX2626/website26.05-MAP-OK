@@ -27,14 +27,12 @@
     </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://api.steinhq.com">
-    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         *, *::before, *::after {
@@ -121,6 +119,7 @@
             min-height: 350px;
         }
 
+        /* --- תוספות ל-UI של המפה (Wolt Style + Rubik Font) --- */
         .map-custom-label {
             font-family: 'Rubik', sans-serif !important;
             background-color: rgba(255, 255, 255, 0.98);
@@ -134,6 +133,7 @@
             cursor: pointer !important;
             pointer-events: auto !important;
         }
+        /* כופה שימוש ברוביק גם בתוך חלוניות המידע של גוגל */
         .gm-style-iw-c, .gm-style-iw-d {
             font-family: 'Rubik', sans-serif !important;
             padding: 0 !important;
@@ -142,6 +142,7 @@
         .gm-style-iw-d {
             overflow: hidden !important;
         }
+        /* כפתור סגירה */
         button.gm-ui-hover-effect {
             top: 2px !important;
             right: 2px !important;
@@ -904,6 +905,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetchPlaces();
             renderCategoryCarousel();
+            // בקשת המיקום האוטומטית הוסרה כדי למנוע את החסימה שמצוינת בדו"ח וכדי שהבקשה תופעל רק בפעולה יזומה של המשתמש.
         });
 
         window.addEventListener('popstate', (event) => {
@@ -1116,6 +1118,7 @@
             }, 200);
         }
 
+        // פונקציה לייעול תמונות שחוזרות מגוגל (LCP)
         function optimizeImgSize(url) {
             if (!url) return '';
             return url.replace('maxwidth=800', 'maxwidth=400').replace('=s1600-w800', '=s800-w400');
@@ -1904,6 +1907,7 @@
             statusBadge.className = `inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm w-fit transition-all ${status.isOpen ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`;
 
             document.getElementById('modalWazeBtn').href = `https://waze.com/ul?q=${encodeURIComponent(place.address)}`;
+            // תוקן: הוסף תוויות aria-label לכפתור ה-Waze במודאל
             document.getElementById('modalWazeBtn').setAttribute('aria-label', 'ניווט Waze למסעדת ' + place.name);
             document.getElementById('modalPhoneBtn').href = `tel:${place.phone}`;
             document.getElementById('modalMapNavigateBtn').setAttribute('data-target-id', place.id);
@@ -2541,6 +2545,7 @@
                 
                 let customIcon = getMarkerIcon(isFav);
 
+                // תוקן: נוסף aria-label לכפתור הניווט בחלונית המפה
                 const markerHtml = `
                     <div class="p-2 text-right" style="direction: rtl; font-family: 'Rubik', sans-serif;">
                         <img src="${place.image}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;" loading="lazy" decoding="async">
