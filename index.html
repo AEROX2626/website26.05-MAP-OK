@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <title>KosherGo - גלו מסעדות, בתי קפה ועגלות קפה כשרים</title>
     <meta name="description" content="KosherGo הוא אינדקס המסעדות הכשרות המוביל בישראל. מצאו בקלות מסעדות בשריות, בתי קפה ועגלות קפה כשרים למהדרין, כולל שעות פתיחה, ניווט וחוות דעת.">
@@ -199,8 +199,8 @@
 
             <div class="hidden md:flex flex-1 max-w-md relative">
                 <input type="text" id="desktopSearchInput" placeholder="חיפוש מסעדה, סוג אוכל, עגלת קפה..." 
-                       class="w-full bg-slate-100/80 border border-transparent focus:bg-white focus:border-brand-500 rounded-2xl py-2.5 pr-11 pl-4 text-sm font-medium transition-all"
-                       oninput="handleSearch(this.value)" aria-label="חיפוש מסעדות">
+                        class="w-full bg-slate-100/80 border border-transparent focus:bg-white focus:border-brand-500 rounded-2xl py-2.5 pr-11 pl-4 text-sm font-medium transition-all"
+                        oninput="handleSearch(this.value)" aria-label="חיפוש מסעדות">
                 <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
             </div>
 
@@ -254,7 +254,7 @@
                     </div>
                     <div class="relative h-36 rounded-2xl overflow-hidden mb-3">
                         <img id="weeklyFeaturedImage" src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=500&q=80" 
-                             alt="תמונת מסעדת נבחר השבוע" class="w-full h-full object-cover" decoding="async">
+                             alt="תמונת מסעדת נבחר השבוע" class="w-full h-full object-cover" decoding="async" fetchpriority="high">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         <span id="weeklyFeaturedCategory" class="absolute bottom-2 right-2 wolt-cyan text-white text-[10px] font-bold px-2 py-0.5 rounded-lg"></span>
                     </div>
@@ -905,9 +905,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetchPlaces();
             renderCategoryCarousel();
-            setTimeout(() => {
-                requestUserLocation(true);
-            }, 1200);
+            // בקשת המיקום האוטומטית הוסרה כדי למנוע את החסימה שמצוינת בדו"ח וכדי שהבקשה תופעל רק בפעולה יזומה של המשתמש.
         });
 
         window.addEventListener('popstate', (event) => {
@@ -1120,6 +1118,12 @@
             }, 200);
         }
 
+        // פונקציה לייעול תמונות שחוזרות מגוגל (LCP)
+        function optimizeImgSize(url) {
+            if (!url) return '';
+            return url.replace('maxwidth=800', 'maxwidth=400').replace('=s1600-w800', '=s800-w400');
+        }
+
         async function fetchPlaces() {
             const resultsCounter = document.getElementById('resultsCounter');
             try {
@@ -1152,7 +1156,7 @@
                         user_ratings_total: parseInt(item.user_ratings_total) || (10 + index * 5),
                         milk_meat: item['Milk / Meat'] || (index % 2 === 0 ? 'בשרי 🥩' : 'חלבי 🧀'),
                         website: item.website || 'https://google.com',
-                        image: item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
+                        image: optimizeImgSize(item.image) || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
                         kosher: item.kosher || 'כשר למהדרין',
                         reviews: item.reviews || 'מקום מצוין, שירות אדיב ואוכל טעים מאוד!|הגענו בערב והיה פשוט מושלם, נחזור בטוח.',
                         coords: parsedCoords,
@@ -1165,7 +1169,7 @@
                             item.image6,
                             item.image7,
                             item.image8
-                        ].filter(url => url && url.trim() !== '')
+                        ].filter(url => url && url.trim() !== '').map(optimizeImgSize)
                     };
                 });
 
@@ -1748,7 +1752,7 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 shrink-0">
-                            <a href="https://waze.com/ul?q=${encodeURIComponent(place.address)}" target="_blank" class="quick-action-btn flex items-center justify-center gap-1.5 bg-[#0099FF] hover:bg-[#0088EB] text-white font-bold py-2 px-3 rounded-xl text-xs transition-all shadow-sm">
+                            <a href="https://waze.com/ul?q=${encodeURIComponent(place.address)}" target="_blank" aria-label="ניווט Waze למסעדת ${place.name}" class="quick-action-btn flex items-center justify-center gap-1.5 bg-[#0099FF] hover:bg-[#0088EB] text-white font-bold py-2 px-3 rounded-xl text-xs transition-all shadow-sm">
                                 <i class="fa-brands fa-waze text-base text-white"></i>
                                 <span>ניווט Waze</span>
                             </a>
@@ -1903,10 +1907,11 @@
             statusBadge.className = `inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm w-fit transition-all ${status.isOpen ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`;
 
             document.getElementById('modalWazeBtn').href = `https://waze.com/ul?q=${encodeURIComponent(place.address)}`;
+            // תוקן: הוסף תוויות aria-label לכפתור ה-Waze במודאל
+            document.getElementById('modalWazeBtn').setAttribute('aria-label', 'ניווט Waze למסעדת ' + place.name);
             document.getElementById('modalPhoneBtn').href = `tel:${place.phone}`;
             document.getElementById('modalMapNavigateBtn').setAttribute('data-target-id', place.id);
 
-            // --- הזרקת חוות הדעת לתוך המודאל (תיקון הבאג + עיצוב תואם תמונה + אפקט ריחוף) ---
             const reviewsContainer = document.getElementById('modalReviewsContainer');
             reviewsContainer.innerHTML = '';
             const parsedReviewsForModal = parseReviewText(place.reviews);
@@ -1953,7 +1958,6 @@
                     reviewsContainer.appendChild(revDiv);
                 });
             }
-            // ------------------------------------------------
 
             activeGallery = place.gallery;
             currentGalleryIndex = 0;
@@ -2354,18 +2358,15 @@
                     renderPlaces(); // Needs to re-render to visually remove from grid
                 }
             } else {
-                // -- FIX: Do not call renderPlaces() to avoid image flickering --
                 const classToAdd = isNowFav ? 'fa-solid' : 'fa-regular';
                 const classToRemove = isNowFav ? 'fa-regular' : 'fa-solid';
                 
-                // Update heart icons in the DOM directly
                 document.querySelectorAll(`button[onclick*="toggleFavorite('${id}'"] i`).forEach(iEl => {
-                    if (iEl.id === 'modalFavIcon') return; // handled separately if needed, but actually it's fine to update it too
+                    if (iEl.id === 'modalFavIcon') return; 
                     iEl.classList.remove(classToRemove);
                     iEl.classList.add(classToAdd);
                 });
 
-                // Update Map Markers dynamically without redrawing everything
                 const newIcon = getMarkerIcon(isNowFav);
                 if (desktopMarkers) desktopMarkers.forEach(m => { if (m.placeId === id) m.setIcon(newIcon); });
                 if (mobileMarkers) mobileMarkers.forEach(m => { if (m.placeId === id) m.setIcon(newIcon); });
@@ -2535,7 +2536,6 @@
             mobileMarkers.forEach(marker => marker.setMap(null));
             mobileMarkers = [];
 
-            // יצירת חלונית מידע יחידה משותפת לכל מפה (מונע כפילויות)
             if (!window.desktopSharedInfoWindow) window.desktopSharedInfoWindow = new google.maps.InfoWindow();
             if (!window.mobileSharedInfoWindow) window.mobileSharedInfoWindow = new google.maps.InfoWindow();
 
@@ -2545,6 +2545,7 @@
                 
                 let customIcon = getMarkerIcon(isFav);
 
+                // תוקן: נוסף aria-label לכפתור הניווט בחלונית המפה
                 const markerHtml = `
                     <div class="p-2 text-right" style="direction: rtl; font-family: 'Rubik', sans-serif;">
                         <img src="${place.image}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;" loading="lazy" decoding="async">
@@ -2559,7 +2560,7 @@
                             </span>
                         </div>
                         <div style="display: flex; gap: 4px; margin-top: 6px;">
-                            <a href="https://waze.com/ul?q=${encodeURIComponent(place.address)}" target="_blank" style="background-color: #0099FF; color: white; font-weight: bold; font-size: 9px; padding: 4px 8px; border-radius: 4px; text-decoration: none; flex: 1; text-align: center;">Waze</a>
+                            <a href="https://waze.com/ul?q=${encodeURIComponent(place.address)}" target="_blank" aria-label="ניווט Waze למסעדת ${place.name}" style="background-color: #0099FF; color: white; font-weight: bold; font-size: 9px; padding: 4px 8px; border-radius: 4px; text-decoration: none; flex: 1; text-align: center;">Waze</a>
                             <button onclick="openPlaceDetails('${place.id}')" style="background-color: #00c2e8; color: white; font-weight: bold; font-size: 9px; border: none; border-radius: 4px; cursor: pointer; flex: 1; text-align: center;">מידע</button>
                         </div>
                     </div>
