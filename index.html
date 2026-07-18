@@ -585,10 +585,15 @@
                     </div>
                 </div>
 
-                <div class="flex gap-2 pt-2 border-t border-slate-100">
-                    <button id="modalShareBtn" onclick="shareRestaurant()" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-3 px-4 rounded-xl transition-all active:scale-95 w-full">
+                <!-- התווסף כאן כפתור התפריט לצד כפתור השיתוף -->
+                <div class="flex gap-2 pt-4 border-t border-slate-100">
+                    <button id="modalMenuBtn" onclick="openMenuViewer()" class="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-black py-3 px-4 rounded-xl transition-all active:scale-95 shadow-sm">
+                        <i class="fa-solid fa-book-open text-base"></i>
+                        <span>צפה בתפריט</span>
+                    </button>
+                    <button id="modalShareBtn" onclick="shareRestaurant()" class="flex-1 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-black py-3 px-4 rounded-xl transition-all active:scale-95">
                         <i class="fa-solid fa-share-nodes text-base"></i>
-                        <span>שתף מסעדה עם חברים</span>
+                        <span>שתף מסעדה</span>
                     </button>
                 </div>
 
@@ -663,6 +668,23 @@
             </a>
         </div>
 
+        <!-- תצוגת תפריט פנימית -->
+        <div id="menuViewerModal" class="fixed inset-0 z-[160] bg-slate-900/60 backdrop-blur-sm hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeMenuViewer()">
+            <div class="bg-white w-full h-[85vh] rounded-t-3xl shadow-2xl flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 mx-auto max-w-4xl" id="menuViewerSheet">
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-10 shadow-sm">
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-brand-500"></i>
+                        <span>תפריט - <span id="menuViewerTitle"></span></span>
+                    </h2>
+                    <button onclick="closeMenuViewer()" class="text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div id="menuViewerContent" class="flex-1 overflow-y-auto bg-slate-50 p-4 flex flex-col gap-4">
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div id="favoritesPanel" class="fixed inset-0 z-[120] overflow-hidden hidden">
@@ -722,6 +744,56 @@
         let googleMapsPromise = null;
         
         let hasPromptedLocation = false;
+
+        window.openMenuViewer = function() {
+            const place = placesDatabase.find(p => p.id === currentModalPlaceId);
+            if (!place) return;
+
+            if (place.menu_images && place.menu_images.length > 0) {
+                document.getElementById('menuViewerTitle').innerText = place.name;
+                const content = document.getElementById('menuViewerContent');
+                content.innerHTML = '';
+                
+                place.menu_images.forEach(imgUrl => {
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    img.className = 'w-full h-auto rounded-xl shadow-sm border border-slate-200 object-contain';
+                    img.loading = 'lazy';
+                    content.appendChild(img);
+                });
+
+                const modal = document.getElementById('menuViewerModal');
+                const sheet = document.getElementById('menuViewerSheet');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    sheet.classList.remove('translate-y-full');
+                }, 10);
+            } 
+            else if (place.menu_link && place.menu_link !== '') {
+                window.open(place.menu_link, '_blank');
+            } 
+            else {
+                let query = encodeURIComponent(`תפריט ${place.name}`);
+                let url = `https://www.google.co.il/search?q=${query}&hl=he-IL&gl=il`;
+                window.open(url, '_blank');
+            }
+        };
+
+        window.closeMenuViewer = function() {
+            const modal = document.getElementById('menuViewerModal');
+            const sheet = document.getElementById('menuViewerSheet');
+            
+            modal.classList.add('opacity-0');
+            sheet.classList.add('translate-y-full');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
 
         window.copyModalPhone = function() {
             if (window.currentModalPhone) {
@@ -884,7 +956,7 @@
             });
         };
 
-        // הפונקציה הגלובלית שמטפלת במפת עמוד המסעדה - בצורה חסכונית ולא משכפלת מפות מיותרות
+        // הפונקציה הגלובלית שמטפלת במפת עמוד המסעדה
         window.activateModalMap = function() {
             const placeholder = document.getElementById('modalMapPlaceholder');
             const btn = placeholder?.querySelector('button');
@@ -914,9 +986,7 @@
                     }
                 };
 
-                // בדיקה אם המפה כבר הוטענה פעם אחת במהלך הגלישה
                 if (!detailModalMapInstance) {
-                    // יצירת מפה (חיוב פעם אחת בלבד של Google)
                     detailModalMapInstance = new google.maps.Map(document.getElementById('modalSpecificMap'), {
                         zoom: 16,
                         center: place.coords,
@@ -967,7 +1037,6 @@
                         detailModalMapInstance.myLocBtnAdded = true;
                     }
                 } else {
-                    // המפה כבר קיימת - אנחנו רק משנים לה מיקום בחינם!
                     google.maps.event.trigger(detailModalMapInstance, 'resize');
                     detailModalMapInstance.setCenter(place.coords);
                     detailModalMapInstance.setZoom(16);
@@ -975,7 +1044,6 @@
                     detailModalMapInstance.infowindow.close(); 
                 }
 
-                // עדכון חלון המידע של הסיכה למסעדה החדשה
                 const markerHtml = `
                     <div class="p-2 text-right" style="direction: rtl; font-family: 'Rubik', sans-serif;">
                         <div style="display: flex; gap: 8px; margin-bottom: 6px;">
@@ -996,7 +1064,6 @@
                 
                 detailModalMapInstance.infowindow.setContent(markerHtml);
                 
-                // טיפול במיקום משתמש במפה הפנימית
                 if (isGeoActive && userCoords) {
                     const userIcon = {
                         path: google.maps.SymbolPath.CIRCLE,
@@ -1454,6 +1521,8 @@
                         kosher: item.kosher || 'כשר למהדרין',
                         reviews: item.reviews || 'מקום מצוין, שירות אדיב ואוכל טעים מאוד!|הגענו בערב והיה פשוט מושלם, נחזור בטוח.',
                         coords: parsedCoords,
+                        menu_images: item.menu_images ? item.menu_images.split(',').map(url => url.trim()).filter(url => url) : [],
+                        menu_link: item.menu_link || '',
                         gallery: [
                             item.image,
                             item.image2 || 'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=800&q=80',
@@ -1515,8 +1584,8 @@
 
         function loadFallbackMockData() {
             const mockData = [
-                { id: 'mock-1', google_place_id: '', name: 'סטקיית העיר טירת כרמל', slug: generateSlug('סטקיית העיר טירת כרמל'), city: 'צפון', address: cleanAddress('משה שרת 4, טירת כרמל'), category: 'מסעדה', phone: '04-8576433', description: 'חווית בשרים אותנטית.', hours: "יום ראשון: 11:30–23:00, יום שני: 11:30–23:00, יום שלישי: 11:30–23:00, יום רביעי: 11:30–23:00, יום חמישי: 11:30–23:00, יום שישי: 11:30 - 15:30, יום שבת: סגור", rating: 4.8, user_ratings_total: 421, milk_meat: 'בשרי 🥩', website: 'https://waze.com/ul?q=משה+שרת+4+טירת+כרמל', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'בשר איכותי מאוד!|הסלטים הכי טעימים שיש|שירות פשוט מהיר ומפנק', coords: { lat: 32.7610, lng: 34.9702 }, gallery: ['https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'] },
-                { id: 'mock-2', google_place_id: '', name: 'קפה ביער - עגלת קפה פסטורלית', slug: generateSlug('קפה ביער - עגלת קפה פסטורלית'), city: 'שרון', address: cleanAddress('יער קדימה, השרון'), category: 'עגלת קפה', phone: '052-8765431', description: 'קסם ביער קדימה.', hours: "ימים א'-ה': 07:30 - 17:00, ו': 07:30 - 15:00, ש': סגור", rating: 4.9, user_ratings_total: 180, milk_meat: 'חלבי 🧀', website: 'https://waze.com/ul?q=יער+קדימה', image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'פינה קסומה ביער|מאפי שמרים מעולם אחר|כיף גדול לילדים', coords: { lat: 32.2844, lng: 34.8908 }, gallery: ['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1447078806655-40579c2520d6?auto=format&fit=crop&w=800&q=80'] }
+                { id: 'mock-1', google_place_id: '', name: 'סטקיית העיר טירת כרמל', slug: generateSlug('סטקיית העיר טירת כרמל'), city: 'צפון', address: cleanAddress('משה שרת 4, טירת כרמל'), category: 'מסעדה', phone: '04-8576433', description: 'חווית בשרים אותנטית.', hours: "יום ראשון: 11:30–23:00, יום שני: 11:30–23:00, יום שלישי: 11:30–23:00, יום רביעי: 11:30–23:00, יום חמישי: 11:30–23:00, יום שישי: 11:30 - 15:30, יום שבת: סגור", rating: 4.8, user_ratings_total: 421, milk_meat: 'בשרי 🥩', website: 'https://waze.com/ul?q=משה+שרת+4+טירת+כרמל', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'בשר איכותי מאוד!|הסלטים הכי טעימים שיש|שירות פשוט מהיר ומפנק', coords: { lat: 32.7610, lng: 34.9702 }, menu_images: ['https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80'], menu_link: '', gallery: ['https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'] },
+                { id: 'mock-2', google_place_id: '', name: 'קפה ביער - עגלת קפה פסטורלית', slug: generateSlug('קפה ביער - עגלת קפה פסטורלית'), city: 'שרון', address: cleanAddress('יער קדימה, השרון'), category: 'עגלת קפה', phone: '052-8765431', description: 'קסם ביער קדימה.', hours: "ימים א'-ה': 07:30 - 17:00, ו': 07:30 - 15:00, ש': סגור", rating: 4.9, user_ratings_total: 180, milk_meat: 'חלבי 🧀', website: 'https://waze.com/ul?q=יער+קדימה', image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', kosher: 'כשר למהדרין', reviews: 'פינה קסומה ביער|מאפי שמרים מעולם אחר|כיף גדול לילדים', coords: { lat: 32.2844, lng: 34.8908 }, menu_images: [], menu_link: '', gallery: ['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1447078806655-40579c2520d6?auto=format&fit=crop&w=800&q=80'] }
             ];
             placesDatabase = mockData;
             sanitizeAndFixRegions(); 
@@ -2230,7 +2299,6 @@
             document.getElementById('modalWazeBtn').href = `https://waze.com/ul?q=${encodeURIComponent(place.address)}`;
             document.getElementById('modalWazeBtn').setAttribute('aria-label', 'ניווט Waze למסעדת ' + place.name);
             
-            // --- שינוי הקישור והתנהגות של כפתור גוגל מפות לפי PLACE ID ---
             let mapQuery = `${place.name} ${place.address}`;
             let mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
             
@@ -2239,7 +2307,6 @@
             }
             
             document.getElementById('modalMapsBtn').href = mapUrl;
-            // ----------------------------------------------------------------
 
             document.getElementById('modalPhoneTextLink').href = `tel:${place.phone}`;
             document.getElementById('modalPhoneTextLink').innerText = place.phone;
@@ -2316,17 +2383,15 @@
 
             renderRelatedPlaces(place);
 
-            // --- עדכון חכם למפת עמוד המסעדה ---
+            // --- התערבות במפת המודל בלבד אם היא כבר קיימת כדי שלא תוצג פעמיים---
             const modalPlaceholder = document.getElementById('modalMapPlaceholder');
             
             if (detailModalMapInstance) {
-                // המפה כבר קיימת - נעלים את הפלייסחולדר ונפעיל את הפונקציה שתזיז אותה
                 if (modalPlaceholder) modalPlaceholder.style.display = 'none';
                 if (typeof window.activateModalMap === 'function') {
                     window.activateModalMap();
                 }
             } else {
-                // מפה עדיין לא הוטענה בביקור הנוכחי באתר, נציג את כפתור הפלייסחולדר
                 if (modalPlaceholder) {
                     modalPlaceholder.style.display = 'flex';
                     const modalBtn = modalPlaceholder.querySelector('button');
@@ -2336,7 +2401,6 @@
                     }
                 }
             }
-            // ------------------------------------
 
             const isFav = favorites.includes(String(place.id));
             const modalFavIcon = document.getElementById('modalFavIcon');
@@ -2735,7 +2799,6 @@
                 }
             }
             
-            // --- הוספת כפתור מיקום עצמי למפות הראשיות ---
             const addLocBtnToMap = (mapInst, isMobileMap) => {
                 if (mapInst && !mapInst.myLocBtnAdded) {
                     const locBtnWrapper = document.createElement('div');
@@ -2773,7 +2836,6 @@
 
             addLocBtnToMap(desktopMapInstance, false);
             addLocBtnToMap(mobileMapInstance, true);
-            // ---------------------------------------------
 
             if (isGeoActive && userCoords && typeof google !== 'undefined') {
                 const userIcon = {
