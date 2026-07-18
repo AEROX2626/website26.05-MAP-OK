@@ -32,7 +32,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- תיקון קישור לאייקונים שהעלים את האייקונים בגרסה הקודמת -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -444,8 +443,8 @@
         </button>
     </div>
 
-    <div id="mobileMapPage" class="fixed inset-0 bg-white z-[60] hidden flex flex-col">
-        <!-- הוספנו z-[100] ו- min-h-[64px] ו- shadow-sm כדי למנוע דריסה של המפה וחיתוך של הלוגו -->
+    <!-- התיקון הקריטי מבוצע כאן: z-[110] במקום z-[60] -->
+    <div id="mobileMapPage" class="fixed inset-0 bg-white z-[110] hidden flex flex-col">
         <div class="min-h-[64px] h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 relative z-[100] shadow-sm">
             <button onclick="switchMobileTab('search')" class="text-slate-800 font-black flex items-center gap-1.5 py-1 px-3 bg-slate-100 rounded-xl text-xs shadow-sm active:scale-95 transition-transform">
                 <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
