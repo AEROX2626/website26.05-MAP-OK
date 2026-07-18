@@ -32,7 +32,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         *, *::before, *::after {
@@ -1642,7 +1642,7 @@
                                     window.userMarkerDesktop.setMap(desktopMapInstance);
                                 }
                                 window.userMarkerDesktop.setPosition(userCoords);
-                                desktopMapInstance.setCenter(userCoords);
+                                desktopMapInstance.panTo(userCoords);
                                 desktopMapInstance.setZoom(14);
                             }
                             if (mobileMapInstance) {
@@ -1652,7 +1652,7 @@
                                     window.userMarkerMobile.setMap(mobileMapInstance);
                                 }
                                 window.userMarkerMobile.setPosition(userCoords);
-                                mobileMapInstance.setCenter(userCoords);
+                                mobileMapInstance.panTo(userCoords);
                                 mobileMapInstance.setZoom(14);
                             }
                             if (detailModalMapInstance) {
@@ -2202,13 +2202,13 @@
                             
                             locBtn.onclick = () => {
                                 if (userCoords) {
-                                    detailModalMapInstance.setCenter(userCoords);
+                                    detailModalMapInstance.panTo(userCoords);
                                     detailModalMapInstance.setZoom(16);
                                 } else {
                                     requestUserLocation(false);
                                     setTimeout(() => {
                                         if (userCoords) {
-                                            detailModalMapInstance.setCenter(userCoords);
+                                            detailModalMapInstance.panTo(userCoords);
                                             detailModalMapInstance.setZoom(16);
                                         }
                                     }, 1500);
@@ -2676,13 +2676,16 @@
                         streetViewControl: false,
                         fullscreenControl: false,
                         gestureHandling: 'greedy',
-                        zoomControl: true 
+                        zoomControl: true,
+                        zoomControlOptions: {
+                            position: google.maps.ControlPosition.RIGHT_CENTER
+                        }
                     });
                 }
             }
             
             // --- הוספת כפתור מיקום עצמי למפות הראשיות ---
-            const addLocBtnToMap = (mapInst) => {
+            const addLocBtnToMap = (mapInst, isMobileMap) => {
                 if (mapInst && !mapInst.myLocBtnAdded) {
                     const locBtnWrapper = document.createElement('div');
                     locBtnWrapper.style.margin = '10px';
@@ -2697,13 +2700,13 @@
                         e.preventDefault();
                         e.stopPropagation();
                         if (userCoords) {
-                            mapInst.setCenter(userCoords);
+                            mapInst.panTo(userCoords);
                             mapInst.setZoom(15);
                         } else {
                             requestUserLocation(false);
                             setTimeout(() => {
                                 if (userCoords) {
-                                    mapInst.setCenter(userCoords);
+                                    mapInst.panTo(userCoords);
                                     mapInst.setZoom(15);
                                 }
                             }, 1500);
@@ -2711,13 +2714,14 @@
                     };
                     
                     locBtnWrapper.appendChild(locBtn);
-                    mapInst.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locBtnWrapper);
+                    const pos = isMobileMap ? google.maps.ControlPosition.RIGHT_CENTER : google.maps.ControlPosition.RIGHT_BOTTOM;
+                    mapInst.controls[pos].push(locBtnWrapper);
                     mapInst.myLocBtnAdded = true;
                 }
             };
 
-            addLocBtnToMap(desktopMapInstance);
-            addLocBtnToMap(mobileMapInstance);
+            addLocBtnToMap(desktopMapInstance, false);
+            addLocBtnToMap(mobileMapInstance, true);
             // ---------------------------------------------
 
             if (isGeoActive && userCoords && typeof google !== 'undefined') {
@@ -2862,7 +2866,7 @@
                     }
                     if (desktopMarkers.length === 0) renderPlaces();
                     
-                    desktopMapInstance.setCenter(place.coords);
+                    desktopMapInstance.panTo(place.coords);
                     desktopMapInstance.setZoom(15);
                     const dMarker = desktopMarkers.find(m => m.placeId === id);
                     if (dMarker) {
@@ -2886,7 +2890,7 @@
                     }
                     if (mobileMarkers.length === 0) renderPlaces();
                     
-                    mobileMapInstance.setCenter(place.coords);
+                    mobileMapInstance.panTo(place.coords);
                     mobileMapInstance.setZoom(15);
                     const mMarker = mobileMarkers.find(m => m.placeId === id);
                     if (mMarker) {
@@ -2961,7 +2965,7 @@
                             } else if (placesDatabase.length > 0) {
                                 targetCenter = placesDatabase[0].coords;
                             }
-                            mobileMapInstance.setCenter(targetCenter);
+                            mobileMapInstance.panTo(targetCenter);
                             mobileMapInstance.setZoom(14);
                         }
                     }
