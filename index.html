@@ -2406,14 +2406,12 @@
             });
         }
 
-        // כפתור ימינה – מעביר לתמונה הבאה מבחינה ויזואלית בכיוון ימין (אינדקס קודם ב-RTL)
         function nextSliderImage(event) {
             if (event) event.stopPropagation();
             currentGalleryIndex = (currentGalleryIndex - 1 + activeGallery.length) % activeGallery.length;
             updateSliderImage();
         }
 
-        // כפתור שמאלה – מעביר לתמונה הבאה מבחינה ויזואלית בכיוון שמאל (אינדקס בא ב-RTL)
         function prevSliderImage(event) {
             if (event) event.stopPropagation();
             currentGalleryIndex = (currentGalleryIndex + 1) % activeGallery.length;
@@ -2683,6 +2681,45 @@
                 }
             }
             
+            // --- הוספת כפתור מיקום עצמי למפות הראשיות ---
+            const addLocBtnToMap = (mapInst) => {
+                if (mapInst && !mapInst.myLocBtnAdded) {
+                    const locBtnWrapper = document.createElement('div');
+                    locBtnWrapper.style.margin = '10px';
+                    locBtnWrapper.style.zIndex = '10';
+                    
+                    const locBtn = document.createElement('button');
+                    locBtn.className = 'bg-white w-10 h-10 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)] flex items-center justify-center text-slate-700 hover:text-[#00c2e8] transition-colors border border-slate-100 outline-none';
+                    locBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs text-lg"></i>';
+                    locBtn.title = 'המיקום שלי';
+                    
+                    locBtn.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (userCoords) {
+                            mapInst.setCenter(userCoords);
+                            mapInst.setZoom(15);
+                        } else {
+                            requestUserLocation(false);
+                            setTimeout(() => {
+                                if (userCoords) {
+                                    mapInst.setCenter(userCoords);
+                                    mapInst.setZoom(15);
+                                }
+                            }, 1500);
+                        }
+                    };
+                    
+                    locBtnWrapper.appendChild(locBtn);
+                    mapInst.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locBtnWrapper);
+                    mapInst.myLocBtnAdded = true;
+                }
+            };
+
+            addLocBtnToMap(desktopMapInstance);
+            addLocBtnToMap(mobileMapInstance);
+            // ---------------------------------------------
+
             if (isGeoActive && userCoords && typeof google !== 'undefined') {
                 const userIcon = {
                     path: google.maps.SymbolPath.CIRCLE,
