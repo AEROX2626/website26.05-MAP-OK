@@ -2,1334 +2,224 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    
-    <title>KosherGo - מנוע החיפוש למסעדות כשרות בישראל</title>
-    <meta name="description" content="KosherGo הוא מנוע החיפוש למסעדות כשרות בישראל - מבוסס על דירוגים אמיתיים. גלו את המסעדות הטובות ביותר באזור שלכם.">
-    <link rel="canonical" href="https://koshergo.co.il/">
-    <meta property="og:title" content="KosherGo - מנוע החיפוש למסעדות כשרות בישראל">
-    <meta property="og:description" content="מנוע החיפוש למסעדות כשרות בישראל - מבוסס על דירוגים אמיתיים. גלו את המסעדות הטובות ביותר באזור שלכם.">
-    <meta property="og:url" content="https://koshergo.co.il/">
-    <meta property="og:type" content="website">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "KosherGo",
-      "url": "https://koshergo.co.il/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://koshergo.co.il/?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת גלריה חכמה - עם סרגל התקדמות ומובייל</title>
     <style>
-        *, *::before, *::after {
+        * {
             box-sizing: border-box;
-        }
-        
-        html {
-            font-family: 'Rubik', sans-serif !important;
-            max-width: 100%;
-            width: 100%;
             margin: 0;
             padding: 0;
-            background-color: #fcfdfe;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: clip; 
         }
+
         body {
-            font-family: 'Rubik', sans-serif !important;
-            max-width: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #fcfdfe;
-            overflow-x: clip; 
-            -webkit-overflow-scrolling: touch; 
-        }
-        
-        html.overflow-hidden, body.overflow-hidden {
-            overflow: hidden !important;
-        }
-        
-        #detailPageContainer {
-            -webkit-overflow-scrolling: touch; 
-            overscroll-behavior-y: contain;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 40px 20px;
         }
 
-        #modalGalleryContainer, #relatedPlacesContainer, #modalReelsContainer {
-            touch-action: pan-x pan-y;
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 400;
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch; 
-        }
-        
-        .wolt-cyan { background-color: #00c2e8; }
-        .wolt-cyan-hover:hover { background-color: #00adc0; }
-        .wolt-text-cyan { color: #00c2e8; }
-        .wolt-bg-light { background-color: #e2f8fd; }
-        .wolt-border-cyan { border-color: #00c2e8; }
-        .wolt-shadow { box-shadow: 0 4px 20px rgba(0, 194, 232, 0.12); }
-        
-        .sticky-header {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .sticky-filters {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 64px; 
-            z-index: 90;
-        }
-        @media (min-width: 768px) {
-            .sticky-filters { top: 80px; }
-        }
-        
-        #desktopMap, #mobileMap, #modalSpecificMap {
-            touch-action: pan-x pan-y !important;
-        }
-        
-        .page-transition {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-        }
-        
-        .gmap-container {
-            width: 100%;
-            height: 100%;
-            min-height: 350px;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .map-custom-label {
-            font-family: 'Rubik', sans-serif !important;
-            background-color: rgba(255, 255, 255, 0.98);
-            border: 1px solid #e2e8f0;
+        .card {
+            background: #ffffff;
+            border: 1px solid #eaeaea;
             border-radius: 8px;
-            padding: 4px 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-top: -8px; 
-            white-space: nowrap;
-            direction: rtl;
-            cursor: pointer !important;
-            pointer-events: auto !important;
-        }
-        .gm-style-iw-c, .gm-style-iw-d {
-            font-family: 'Rubik', sans-serif !important;
-            padding: 0 !important;
-            max-width: 260px !important;
-            border-radius: 12px !important;
-        }
-        .gm-style-iw-d {
-            overflow: hidden !important;
-            max-height: none !important;
-        }
-        button.gm-ui-hover-effect {
-            top: 6px !important;
-            left: 6px !important;
-            right: auto !important;
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            border-radius: 50% !important;
-            width: 24px !important;
-            height: 24px !important;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
-            z-index: 10 !important;
-        }
-        button.gm-ui-hover-effect span {
-            margin: 0 !important;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
         }
 
-        /* סגנונות לפיד (Reels) */
-        .feed-video-wrapper {
-            position: relative;
-            width: 100%;
-            background: #000;
-            aspect-ratio: 9 / 16;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
-        .feed-video {
-            position: absolute;
-            inset: 0;
+
+        .gallery-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            cursor: ew-resize;
+            /* מניעת פעולות מגע ברירת מחדל כמו רענון משיכה במובייל כשמחליקים על התמונה */
+            touch-action: pan-y; 
+        }
+
+        .dynamic-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            z-index: 2;
+        }
+
+        /* עיצוב פס ההתקדמות (הסרגל) */
+        .progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.4);
+            z-index: 2;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #333; /* צבע הסרגל עצמו - אפשר לשנות לכל צבע שתבחר */
+            width: 0%; 
+            transition: width 0.15s ease-out; /* אנימציה חלקה כשפס מתמלא */
+        }
+
+        .card-info {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .card-price {
+            font-size: 16px;
+            color: #666;
         }
     </style>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#e5f9fc',
-                            100: '#bceef7',
-                            500: '#00c2e8', 
-                            600: '#009ebd',
-                            700: '#007b94',
-                        },
-                        accent: {
-                            DEFAULT: '#22c55e', 
-                            hover: '#16a34a',
-                        },
-                        kosherGold: '#d97706',
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-[#fcfdfe] text-slate-800 min-h-screen flex flex-col antialiased relative pb-20 md:pb-0">
+<body>
 
-    <div id="toastContainer" class="fixed top-5 left-0 right-0 mx-auto md:right-auto md:left-5 z-[200] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm pointer-events-none"></div>
+    <h1>מבחר מקומות אירוח</h1>
 
-    <div class="bg-brand-500 text-white text-center py-2 px-4 text-xs md:text-sm font-bold relative z-40 flex items-center justify-center gap-2 shadow-sm">
-        <i class="fa-solid fa-certificate text-white animate-spin" style="animation-duration: 4s;"></i>
-        <span>כל המסעדות כשרות וסגורות בשבת כהלכה! 🍷</span>
-    </div>
-
-    <header class="sticky-header bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm" id="mainHeader">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4" aria-label="תפריט ראשי">
-            
-            <a href="#" class="flex items-center gap-2.5 shrink-0" onclick="window.switchMainTab('home'); return false;" aria-label="דף הבית - KosherGo">
-                <div class="w-10 h-10 md:w-11 md:h-11 rounded-2xl wolt-cyan flex items-center justify-center text-white shadow-md shrink-0">
-                    <i class="fa-solid fa-utensils text-lg md:text-xl text-white"></i>
-                </div>
-                <div class="flex flex-col justify-center pt-0.5 text-right">
-                    <div dir="ltr" class="inline-flex flex-row items-baseline gap-1.5 text-xl md:text-2xl font-black tracking-tight leading-none" style="justify-content: flex-end;">
-                        <span class="text-brand-500">Kosher</span>
-                        <span class="text-slate-900">Go</span>
-                    </div>
-                    <span class="block text-[9px] md:text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5 md:-mt-1.5 leading-none relative z-10">גילוי קולינרי כשר</span>
-                </div>
-            </a>
-
-            <!-- Search (Desktop) -->
-            <div id="desktopSearchWrapper" class="hidden md:flex flex-1 max-w-md relative">
-                <input type="text" id="desktopSearchInput" placeholder="חיפוש מסעדה, עיר, סוג אוכל..." 
-                        class="w-full bg-slate-100/80 border border-transparent focus:bg-white focus:border-brand-500 rounded-2xl py-2.5 pr-11 pl-10 text-sm font-medium transition-all"
-                        oninput="window.handleSearch(this.value, this.id)" aria-label="חיפוש מסעדות" autocomplete="off">
-                <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
-                
-                <button id="desktopClearBtn" onclick="window.clearSearch()" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-6 h-6 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-slate-200 transition-colors z-10" aria-label="נקה חיפוש">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-                
-                <div id="desktopSearchSuggestions" class="absolute top-full right-0 w-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[150] hidden max-h-64 overflow-y-auto"></div>
-            </div>
-
-            <div class="flex items-center gap-3 shrink-0">
-                <!-- Feed Button (Desktop) -->
-                <button id="desktopFeedBtn" onclick="window.switchMainTab('feed')" class="hidden md:flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold py-2.5 px-4 rounded-2xl transition-colors">
-                    <i class="fa-solid fa-clapperboard text-brand-500"></i>
-                    <span>פיד מסעדות</span>
-                </button>
-
-                <button onclick="window.requestUserLocation(false)" class="hidden md:flex items-center gap-2 bg-[#e5f9fc] text-brand-700 hover:bg-brand-100 text-xs md:text-sm font-bold py-2.5 px-4 rounded-2xl transition-colors" aria-label="מצא מסעדות קרובות אלי">
-                    <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
-                    <span id="locationBtnText">הקרוב אליי</span>
-                </button>
-
-                <!-- City Selector -->
-                <div class="relative flex items-center" id="citySelectorContainer">
-                    <select id="citySelector" onchange="window.handleCitySelect(this.value)" class="appearance-none bg-slate-100 hover:bg-slate-200/70 rounded-2xl py-2.5 pr-4 pl-9 text-xs md:text-sm font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" aria-label="בחר אזור חיפוש">
-                        <option value="all">כל הארץ 📍</option>
-                        <option value="צפון">הצפון וחיפה</option>
-                        <option value="מרכז">מרכז וגוש דן</option>
-                        <option value="ירושלים">ירושלים והסביבה</option>
-                        <option value="שרון">השרון והסביבה</option>
-                        <option value="דרום">הדרום והנגב</option>
-                        <option value="אילת">אילת</option>
-                        <option disabled>──────────</option>
-                        <option value="custom">🔍 הקלד עיר...</option>
-                    </select>
-                    
-                    <input type="text" id="customCityInput" placeholder="הקלד ולחץ Enter" class="hidden absolute inset-0 w-full h-full bg-slate-100 hover:bg-slate-200/70 rounded-2xl py-2.5 pr-8 pl-8 text-xs md:text-sm font-bold text-brand-600 outline-none focus:ring-2 focus:ring-brand-500 z-10 transition-all" onkeypress="window.handleCustomCityEnter(event)" oninput="window.handleCustomCityInput(this.value)" onblur="setTimeout(window.closeCustomCityInput, 250)" autocomplete="off">
-                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-brand-500 text-xs z-20 hidden pointer-events-none" id="customCitySearchIcon"></i>
-                    
-                    <i class="fa-solid fa-chevron-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none transition-opacity duration-200" id="citySelectorChevron"></i>
-                    
-                    <button id="closeCustomCityBtn" onclick="window.closeCustomCityInput()" class="hidden absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 z-20 w-6 h-6 flex items-center justify-center bg-white shadow-sm rounded-full hover:bg-rose-50">
-                        <i class="fa-solid fa-xmark text-[10px]"></i>
-                    </button>
-
-                    <div id="customCitySuggestions" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[150] hidden max-h-48 overflow-y-auto"></div>
-                </div>
-
-                <button onclick="window.toggleFavoritesPanel(true)" class="relative p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 transition-colors" title="מועדפים" aria-label="מועדפים">
-                    <i class="fa-solid fa-heart text-base md:text-lg"></i>
-                    <span id="favoritesBadge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white leading-none aspect-square">0</span>
-                </button>
-            </div>
-        </nav>
-    </header>
-
-    <!-- ==================== תצוגת דף הבית (המסעדות) ==================== -->
-    <div id="homeViewContainer" class="block flex-1 flex flex-col w-full relative">
-        <section class="bg-gradient-to-b from-[#e5f9fc] via-[#f7fdfd] to-[#fcfdfe] text-slate-800 py-10 md:py-16 px-4 relative overflow-visible shadow-sm border-b border-slate-100/50" aria-labelledby="heroTitle">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                
-                <div class="w-full md:w-3/5 text-right space-y-5">
-                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-full text-xs font-bold bg-white text-brand-600 shadow-sm border border-brand-100">
-                        <i class="fa-solid fa-circle-check text-xs text-brand-500"></i>
-                        <span>חוויה קולינרית כשרה</span>
-                    </span>
-                    <h1 id="heroTitle" class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight text-slate-900">
-                        מנוע החיפוש למסעדות <br class="hidden sm:inline">
-                        <span class="text-brand-500 underline decoration-brand-500/10">כשרות בישראל.</span>
-                    </h1>
-                    <p class="text-sm md:text-base text-slate-600 max-w-lg font-medium leading-relaxed">
-                        גלו את המסעדות הטובות ביותר באזור שלכם, על בסיס דירוגים אמיתיים.
-                    </p>
-                </div>
-
-                <div id="weeklyFeaturedSection" class="w-full md:w-2/5 flex justify-center items-center">
-                    <a id="weeklyFeaturedLink" href="#" onclick="window.openPlaceDetailsDirectlyFromFeatured(); event.preventDefault();" class="block bg-white text-slate-900 rounded-3xl p-4 shadow-xl border border-slate-100 max-w-sm w-full relative transform hover:scale-105 transition-transform duration-300 cursor-pointer">
-                        <div class="absolute -top-3 right-4 bg-[#00c2e8] text-white text-[11px] font-black px-3 py-1 rounded-full shadow-md z-10">
-                            נבחר השבוע ⭐
-                        </div>
-                        <div class="relative h-36 rounded-2xl overflow-hidden mb-3">
-                            <img id="weeklyFeaturedImage" src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=500&q=80" 
-                                 alt="תמונת מסעדת נבחר השבוע" class="w-full h-full object-cover" decoding="async" fetchpriority="high">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                            <span id="weeklyFeaturedCategory" class="absolute bottom-2 right-2 wolt-cyan text-white text-[10px] font-bold px-2 py-0.5 rounded-lg"></span>
-                        </div>
-                        <h3 id="weeklyFeaturedName" class="font-bold text-slate-900 text-base">טוען המלצה...</h3>
-                        <div class="flex items-center justify-between mt-2 text-xs text-slate-500">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-star text-amber-500"></i> <span id="weeklyFeaturedRating" class="font-bold text-slate-950">-</span></span>
-                            <span id="weeklyFeaturedKosher" class="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100">בטעינה</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <div class="max-w-4xl mx-auto bg-white p-2 rounded-3xl shadow-2xl mt-8 relative z-20 border border-slate-100">
-                <div class="bg-white rounded-2xl p-2 grid grid-cols-1 md:grid-cols-12 gap-2 text-slate-900">
-                    
-                    <div class="md:col-span-5 relative flex items-center border-b md:border-b-0 md:border-l border-slate-100 pb-2 md:pb-0 md:pl-2">
-                        <i class="fa-solid fa-search text-slate-400 right-3 absolute text-lg pointer-events-none"></i>
-                        <input type="text" id="bookingSearchInput" placeholder="לאן נוסעים? שם מסעדה, עיר, סוג אוכל..." 
-                               class="w-full bg-transparent border-0 pr-10 pl-10 py-2 text-sm font-semibold outline-none focus:ring-0 placeholder-slate-400"
-                               oninput="window.handleSearch(this.value, this.id)" autocomplete="off">
-                        
-                        <button id="bookingClearBtn" onclick="window.clearSearch()" class="absolute left-3 top-1/2 -translate-y-1/2 -mt-1 md:mt-0 text-slate-400 hover:text-slate-600 hidden w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors z-10" aria-label="נקה חיפוש">
-                            <i class="fa-solid fa-xmark text-sm"></i>
-                        </button>
-                        
-                        <div id="bookingSearchSuggestions" class="absolute top-[100%] right-0 w-full md:w-[150%] mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[150] hidden max-h-64 overflow-y-auto"></div>
-                    </div>
-
-                    <div class="md:col-span-4 flex items-center border-b md:border-b-0 md:border-l border-slate-100 pb-2 md:pb-0 md:pl-2">
-                        <button onclick="window.requestUserLocation(false)" class="w-full flex items-center justify-between px-2 py-2 hover:bg-slate-50 rounded-xl text-right text-sm font-bold text-brand-600 transition-colors">
-                            <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-location-arrow text-brand-500 animate-pulse"></i>
-                                <span id="bookingGeoText">חפש לפי המיקום הנוכחי שלי</span>
-                            </span>
-                            <span id="activeDistanceIndicator" class="text-xs bg-brand-50 text-brand-700 py-0.5 px-2 rounded-full hidden">פעיל</span>
-                        </button>
-                    </div>
-
-                    <div class="md:col-span-3 flex items-center gap-2">
-                        <button onclick="window.applyBookingSearch()" class="w-full wolt-cyan wolt-cyan-hover text-white font-bold py-2.5 px-4 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
-                            <span>חפש</span>
-                            <i class="fa-solid fa-angle-left"></i>
-                        </button>
-                        <button onclick="window.resetFilters()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-2.5 rounded-2xl transition-colors" title="נקה הכל">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section class="max-w-7xl mx-auto pt-6 pb-2 bg-transparent">
-            <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-between mb-3">
-                <h2 class="text-lg md:text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-tags wolt-text-cyan"></i>
-                    <span>קטגוריות פופולריות</span>
-                </h2>
-                <span class="text-xs text-slate-400 font-bold hidden md:inline">החליקו ימינה/שמאלה <i class="fa-solid fa-arrows-left-right"></i></span>
-            </div>
-            <div class="flex flex-wrap md:flex-nowrap gap-2.5 gap-y-3 md:gap-y-2.5 md:overflow-x-auto pb-3 px-4 sm:px-6 lg:px-8 no-scrollbar w-full" id="categoryCarousel"></div>
-        </section>
-
-        <section class="sticky-filters bg-white/95 backdrop-blur-md border-y border-slate-100 shadow-sm py-2 z-90 transition-all duration-300">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 w-full">
-                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 max-w-full w-full whitespace-nowrap" style="scrollbar-width: none;">
-                    
-                    <button onclick="window.toggleFilterChip('mehadrinOnly')" id="chip-mehadrinOnly" 
-                            class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold transition-all border border-slate-200 text-slate-700 bg-white hover:bg-slate-50">
-                        <i class="fa-solid fa-stamp text-amber-500"></i>
-                        <span>למהדרין בלבד</span>
-                    </button>
-
-                    <button onclick="window.toggleFilterChip('openNow')" id="chip-openNow" 
-                            class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold transition-all border border-slate-200 text-slate-700 bg-white hover:bg-slate-50">
-                        <i class="fa-solid fa-clock text-emerald-500"></i>
-                        <span>פתוח עכשיו</span>
-                    </button>
-
-                    <button onclick="window.toggleFilterChip('meatOnly')" id="chip-meatOnly" 
-                            class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold transition-all border border-slate-200 text-slate-700 bg-white hover:bg-slate-50">
-                        <i class="fa-solid fa-drumstick-bite text-orange-500"></i>
-                        <span>בשרי 🥩</span>
-                    </button>
-
-                    <button onclick="window.toggleFilterChip('dairyOnly')" id="chip-dairyOnly" 
-                            class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold transition-all border border-slate-200 text-slate-700 bg-white hover:bg-slate-50">
-                        <i class="fa-solid fa-cheese text-yellow-500"></i>
-                        <span>חלבי 🧀</span>
-                    </button>
-
-                    <div class="shrink-0 w-8 md:w-12 h-1 bg-transparent pointer-events-none"></div>
-
-                </div>
-                
-                <button onclick="window.resetFilters()" class="text-xs font-bold wolt-text-cyan hover:text-brand-600 flex items-center gap-1 shrink-0 py-1.5 px-3 hover:bg-brand-50 rounded-full transition-colors bg-white border border-slate-100 shadow-sm">
-                    <i class="fa-solid fa-arrow-rotate-left"></i>
-                    <span>איפוס</span>
-                </button>
-            </div>
-        </section>
-
-        <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
-            
-            <div id="distanceNotification" class="bg-brand-50 border border-brand-100 rounded-2xl p-3 mb-6 hidden items-center justify-between text-brand-800 text-xs md:text-sm font-bold">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-location-dot animate-bounce"></i>
-                    <span>המיקום נקלט בהצלחה! המסעדות ממוינות כעת לפי המרחק ממך.</span>
-                </div>
-                <button onclick="window.disableUserLocation()" class="text-slate-400 hover:text-slate-700 font-normal underline">בטל סינון מרחק</button>
-            </div>
-
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 id="mainSectionTitle" class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">מסעדות מומלצות עבורך</h2>
-                    <p id="mainSectionSubtext" class="text-xs text-slate-500 mt-0.5">רשימה מעודכנת של בתי העסק הכשרים שעונים על הסינון</p>
-                </div>
-                <span id="resultsCounter" class="bg-brand-50 text-brand-700 text-xs font-extrabold px-3 py-1.5 rounded-xl border border-brand-100">טוען נתונים...</span>
-            </div>
-
-            <div id="noResultsState" class="hidden text-center py-16 px-4 bg-white rounded-3xl shadow-sm border border-slate-100 max-w-lg mx-auto my-8">
-                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fa-solid fa-utensils-slash"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-800">לא מצאנו תוצאות מתאימות</h3>
-                <p class="text-xs text-slate-500 mt-2 max-w-xs mx-auto">נסו לשנות את מילת החיפוש, לבחור עיר אחרת או לכבות את חלק מהמסננים הפעילים.</p>
-                <button onclick="window.resetFilters()" class="mt-4 wolt-cyan text-white font-bold py-2 px-6 rounded-xl text-xs">אפס את כל המסננים</button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full" id="placesGrid"></div>
-        </main>
-
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 border-t border-slate-200 hidden md:block" id="desktopMapSection">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-map-location-dot wolt-text-cyan"></i>
-                    <span>מפת מסעדות מובנית</span>
-                </h2>
-                <span class="text-xs text-slate-500 font-bold">לחצו על הסיכות לקבלת מידע מהיר</span>
-            </div>
-            <div id="desktopMap" class="w-full h-[400px] rounded-3xl shadow-md border border-slate-200 relative overflow-hidden z-10 bg-slate-100 flex items-center justify-center">
-                <div id="desktopMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center z-20">
-                    <div class="absolute inset-0 bg-white/70 backdrop-blur-sm"></div>
-                    <div class="relative z-30 flex flex-col items-center p-6 text-center">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4 text-brand-500 text-3xl">
-                            <i class="fa-solid fa-map-location-dot"></i>
-                        </div>
-                        <h3 class="text-lg font-black text-slate-900 mb-2">מפת המסעדות</h3>
-                        <p class="text-sm text-slate-700 font-bold mb-6">לחצו כדי לצפות במסעדות על המפה</p>
-                        <button onclick="window.activateDesktopMap()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2">
-                            <i class="fa-solid fa-map"></i>
-                            <span>הצג מפה אינטראקטיבית</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ==================== תצוגת פיד הסרטונים (Reels) ==================== -->
-    <div id="feedViewContainer" class="hidden flex-1 flex-col w-full bg-slate-50 relative pb-20 md:pb-0">
-        <div id="feedLoader" class="flex flex-col items-center justify-center py-32 w-full">
-            <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
-            <p class="text-slate-500 font-bold">מכין לך את הפיד...</p>
-        </div>
-        <div id="feedListContainer" class="max-w-[450px] mx-auto w-full flex flex-col gap-6 sm:mt-6 hidden px-2">
-            <!-- הסרטונים יוזרקו לכאן דינמית -->
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer id="mainFooter" class="bg-white border-t border-slate-100 pt-8 pb-24 md:pb-8 mt-auto w-full relative z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-bold text-slate-600 mb-4">
-                <button onclick="window.openLegalModal('terms')" class="hover:text-brand-500 transition-colors">תנאי שימוש</button>
-                <span class="text-slate-300">|</span>
-                <button onclick="window.openLegalModal('privacy')" class="hover:text-brand-500 transition-colors">מדיניות פרטיות</button>
-                <span class="text-slate-300">|</span>
-                <button onclick="window.openLegalModal('accessibility')" class="hover:text-brand-500 transition-colors">הצהרת נגישות</button>
-            </div>
-            <p class="text-xs text-slate-400 font-medium">© <script>document.write(new Date().getFullYear())</script> KosherGo. כל הזכויות שמורות.</p>
-            <p class="text-[10px] text-slate-400 mt-2 max-w-xl mx-auto">
-                <i class="fa-solid fa-circle-info text-amber-500 ml-1"></i>
-                המידע המוצג באתר מבוסס על נתוני בתי העסק ואינו מהווה פסיקה הלכתית. האחריות הבלעדית לווידוא תעודת הכשרות ותוקפה חלה על המשתמש מול בית העסק.
-            </p>
-        </div>
-    </footer>
-
-    <!-- תפריט מובייל תחתון -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-150 h-16 z-40 flex items-center justify-around px-1 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-        <button onclick="window.switchMainTab('home')" id="tab-search" class="flex flex-col items-center justify-center gap-1 text-brand-500 flex-1 py-1 transition-colors">
-            <i class="fa-solid fa-magnifying-glass text-lg"></i>
-            <span class="text-[10px] font-black">חיפוש</span>
-        </button>
-        <button onclick="window.switchMainTab('feed')" id="tab-feed" class="flex flex-col items-center justify-center gap-1 text-slate-400 flex-1 py-1 transition-colors">
-            <i class="fa-solid fa-clapperboard text-lg"></i>
-            <span class="text-[10px] font-bold">פיד</span>
-        </button>
-        <button onclick="window.switchMobileTab('map')" id="tab-map" class="flex flex-col items-center justify-center gap-1 text-slate-400 flex-1 py-1 relative transition-colors">
-            <i class="fa-solid fa-map-location-dot text-lg"></i>
-            <span class="text-[10px] font-bold">המפה</span>
-        </button>
-        <button onclick="window.toggleFavoritesPanel(true)" class="flex flex-col items-center justify-center gap-1 text-slate-400 flex-1 py-1 relative transition-colors">
-            <div class="relative inline-block">
-                <i class="fa-solid fa-heart text-lg"></i>
-                <span id="mobileFavsBadge" class="hidden absolute -top-2 -right-2.5 bg-rose-600 text-white font-black text-[9px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white leading-none aspect-square">0</span>
-            </div>
-            <span class="text-[10px] font-bold">מועדפים</span>
-        </button>
-    </div>
-
-    <!-- מפת מובייל -->
-    <div id="mobileMapPage" class="fixed inset-0 bg-white z-[110] hidden flex flex-col">
-        <div class="min-h-[64px] h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 relative z-[100] shadow-sm">
-            <button onclick="window.switchMainTab('home')" class="text-slate-800 font-black flex items-center gap-1.5 py-1 px-3 bg-slate-100 rounded-xl text-xs shadow-sm active:scale-95 transition-transform">
-                <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
-                <span>חזרה</span>
-            </button>
-            
-            <button onclick="window.switchMainTab('home'); window.handleLogoClick();" class="flex items-center gap-2.5 shrink-0 outline-none transition-transform active:scale-95 bg-transparent border-0">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg wolt-cyan flex items-center justify-center text-white shadow-sm shrink-0">
-                    <i class="fa-solid fa-utensils text-[11px] sm:text-xs text-white"></i>
-                </div>
-                <div class="flex flex-col justify-center pt-0.5 text-right">
-                    <div dir="ltr" class="inline-flex flex-row items-baseline gap-1 text-lg sm:text-xl font-black tracking-tight leading-none" style="justify-content: flex-end;">
-                        <span class="text-brand-500">Kosher</span>
-                        <span class="text-slate-900">Go</span>
-                    </div>
-                    <span class="block text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-0.5 md:-mt-1.5 leading-none relative z-10">גילוי קולינרי כשר</span>
-                </div>
-            </button>
-
-            <button onclick="window.requestUserLocation(false)" class="text-brand-700 hover:text-brand-800 font-bold text-xs flex items-center gap-1">
-                <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
-                <span>מיקום</span>
-            </button>
-        </div>
-        <div id="mobileMap" class="flex-1 w-full h-full relative z-10"></div>
+    <div class="grid-container">
         
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-11/12 max-w-xs pointer-events-none">
-            <button onclick="window.switchMainTab('home')" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 border border-slate-700 hover:bg-slate-800 active:scale-95 transition-all pointer-events-auto">
-                <i class="fa-solid fa-list-ul"></i>
-                <span>חזרה לרשימת המסעדות</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- פופאפ מסעדה -->
-    <div id="detailPageContainer" class="fixed inset-0 z-[150] bg-[#fcfdfe] hidden overflow-y-auto page-transition opacity-0 pointer-events-none flex-col">
-        
-        <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 h-14 px-4 flex items-center justify-between shrink-0 z-[70]">
-            <button onclick="window.closeDetailsModal()" class="text-slate-800 font-black flex items-center gap-1.5 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs transition-colors">
-                <i class="fa-solid fa-arrow-right text-brand-500 text-sm"></i>
-                <span>חזרה</span>
-            </button>
-            
-            <a href="/" onclick="window.executeCloseModalUI(); return false;" class="flex items-center gap-2 shrink-0" aria-label="חזרה לדף הבית">
-                <div class="w-7 h-7 rounded-lg wolt-cyan flex items-center justify-center text-white shadow-sm">
-                    <i class="fa-solid fa-utensils text-[11px] text-white"></i>
-                </div>
-                <div class="text-right">
-                    <div dir="ltr" class="inline-flex flex-row items-baseline gap-1 text-base sm:text-lg font-black tracking-tight leading-none" style="justify-content: flex-end;">
-                        <span class="text-brand-500">Kosher</span>
-                        <span class="text-slate-900">Go</span>
-                    </div>
-                    <span class="block text-[8px] text-slate-400 font-bold tracking-widest uppercase -mt-1 leading-none">גילוי קולינרי כשר</span>
-                </div>
-            </a>
-
-            <button id="modalFavBtn" onclick="window.toggleFavoriteFromModal()" class="p-2 hover:bg-rose-50 rounded-full transition-colors outline-none focus:outline-none">
-                <i id="modalFavIcon" class="fa-regular fa-heart text-xl"></i>
-            </button>
-        </div>
-
-        <article class="max-w-4xl mx-auto w-full flex-1 flex flex-col pb-24 relative">
-            
-            <div class="shrink-0 bg-slate-900 relative flex flex-col">
-                <header class="h-56 sm:h-72 relative group overflow-hidden">
-                    <img id="modalMainImage" src="" alt="תמונה ראשית של המסעדה" class="w-full h-full object-cover transition-opacity duration-300 cursor-pointer" onclick="window.nextSliderImage()" title="לחצו להחלפת תמונה">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent pointer-events-none"></div>
-                    
-                    <button onclick="window.prevSliderImage(event)" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg active:scale-95 z-20" aria-label="תמונה קודמת">
-                        <i class="fa-solid fa-chevron-left text-lg"></i>
-                    </button>
-                    <button onclick="window.nextSliderImage(event)" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg active:scale-95 z-20" aria-label="תמונה הבאה">
-                        <i class="fa-solid fa-chevron-right text-lg"></i>
-                    </button>
-                </header>
+        <div class="card">
+            <div class="gallery-container" 
+                 data-images="https://picsum.photos/id/1018/600/400,https://picsum.photos/id/1015/600/400,https://picsum.photos/id/1019/600/400,https://picsum.photos/id/1016/600/400">
+                <img src="https://picsum.photos/id/1018/600/400" alt="תמונת המקום" class="dynamic-image">
                 
-                <div class="px-4 py-3 bg-slate-900 pb-8">
-                    <div id="modalGalleryContainer" class="flex gap-2.5 overflow-x-auto no-scrollbar scroll-smooth"></div>
+                <div class="gallery-counter">
+                    תמונה <span class="current-img">1</span> מתוך <span class="total-imgs">4</span>
                 </div>
-            </div>
-
-            <div class="flex-1 bg-white rounded-t-3xl -mt-6 relative z-20 px-4 sm:px-6 pt-6 pb-6 flex flex-col gap-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                 
-                <div class="flex flex-col gap-1">
-                    <div class="flex flex-wrap gap-1.5 mb-1">
-                        <span id="modalCategoryBadge" class="text-[10px] font-black uppercase bg-brand-500 text-white px-2.5 py-1 rounded-md"></span>
-                        <span id="modalPriceBadge" class="text-[10px] font-black uppercase bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-md"></span>
-                        <span id="modalKosherBadge" class="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-2.5 py-1 rounded-md"></span>
-                        <span id="modalStyleBadge" class="text-[10px] font-black uppercase bg-emerald-600 text-white px-2.5 py-1 rounded-md"></span>
-                    </div>
-                    <h2 id="modalName" class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight"></h2>
+                <!-- הסרגל החדש -->
+                <div class="progress-bar-container">
+                    <div class="progress-fill"></div>
                 </div>
-
-                <div class="flex items-center gap-3 mt-1 mb-2">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-500 text-white rounded-xl flex items-center justify-center font-black text-lg sm:text-xl shadow-md shrink-0">
-                        <span id="modalRatingScore"></span>
-                    </div>
-                    <div class="flex flex-col justify-center text-right">
-                        <div id="modalRatingLabel" class="text-sm sm:text-base font-black text-slate-900 leading-tight"></div>
-                        <div id="modalRatingCount" class="text-[11px] sm:text-xs font-semibold text-slate-500 mt-0.5"></div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-3 mt-2">
-                    <section id="modalStatusBadge" class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg border font-bold text-xs shadow-sm w-fit transition-all">
-                        <i class="fa-solid fa-clock"></i>
-                        <span id="modalStatusText">בודק סטטוס פעילות...</span>
-                    </section>
-                    
-                    <div class="flex flex-col gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                        <div class="flex items-start gap-2 text-slate-600 text-sm font-medium">
-                            <i class="fa-solid fa-location-dot text-rose-500 mt-1"></i>
-                            <span id="modalAddressDisplay" class="leading-relaxed"></span>
-                        </div>
-                        <div class="pr-6">
-                            <button id="modalMapNavigateBtn" onclick="window.navigateToMapFromModal()" class="inline-flex items-center gap-1.5 text-brand-600 font-bold text-xs hover:text-brand-700 bg-brand-50/50 hover:bg-brand-50 py-1 px-2.5 rounded-lg transition-colors active:scale-95 border border-brand-100/50">
-                                <i class="fa-solid fa-map"></i>
-                                <span>הצג במפה</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
-                        <i class="fa-solid fa-certificate text-emerald-500 text-base"></i>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">כשרות</span>
-                        <span id="gridKosherType" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                    </div>
-                    
-                    <div class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
-                        <i class="fa-solid fa-utensils text-blue-500 text-base"></i>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">סוג מקום</span>
-                        <span id="gridCategory" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                    </div>
-                    
-                    <div id="modalDistanceBox" class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center transition-colors">
-                        <i class="fa-solid fa-location-arrow text-rose-500 text-base"></i>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">מרחק</span>
-                        <span id="gridDistance" class="text-[11px] font-black text-slate-800 line-clamp-1"></span>
-                    </div>
-                </div>
-
-                <div id="modalAutoTagsContainer" class="flex flex-wrap gap-1.5 mt-3 hidden"></div>
-
-                <div class="flex gap-2 pt-4 border-t border-slate-100">
-                    <button id="modalMenuBtn" onclick="window.openMenuViewer()" class="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-black py-3 px-4 rounded-xl transition-all active:scale-95 shadow-sm">
-                        <i class="fa-solid fa-book-open text-base"></i>
-                        <span>צפה בתפריט</span>
-                    </button>
-                    <button id="modalShareBtn" onclick="window.shareRestaurant()" class="flex-1 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-black py-3 px-4 rounded-xl transition-all active:scale-95">
-                        <i class="fa-solid fa-share-nodes text-base"></i>
-                        <span>שתף מסעדה</span>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                    <section class="bg-brand-50/30 p-4 rounded-2xl border border-brand-100 text-right h-full">
-                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-2">
-                            <i class="fa-solid fa-clock text-brand-500"></i>
-                            <span>שעות פעילות</span>
-                        </h3>
-                        <p id="modalHours" class="font-medium text-slate-600 text-xs leading-relaxed whitespace-pre-line"></p>
-                    </section>
-                    
-                    <section class="bg-brand-50/30 p-4 rounded-2xl border border-brand-100 text-right h-full flex flex-col justify-center">
-                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-2">
-                            <i class="fa-solid fa-phone text-brand-500"></i>
-                            <span>טלפון למסעדה</span>
-                        </h3>
-                        <div class="flex items-center justify-between bg-white border border-brand-100/50 rounded-xl p-2 shadow-sm">
-                            <a id="modalPhoneTextLink" href="#" class="font-black text-brand-600 hover:text-brand-700 transition-colors text-base" dir="ltr"></a>
-                            <button onclick="window.copyModalPhone()" class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors border border-slate-100" title="העתק מספר">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-                        </div>
-                    </section>
-                </div>
-
-                <section id="modalReelsSection" class="pt-4 border-t border-slate-100 hidden">
-                    <h3 class="text-sm font-black text-slate-950 mb-3 flex items-center gap-2">
-                        <i class="fa-brands fa-instagram wolt-text-cyan"></i>
-                        <span>הצצה למסעדה</span>
-                    </h3>
-                    <!-- מרכוז הקרוסלה -->
-                    <div class="flex justify-center w-full">
-                        <div id="modalReelsContainer" class="flex gap-3 overflow-x-auto pb-4 no-scrollbar scroll-smooth snap-x snap-mandatory max-w-full">
-                            <!-- הסרטונים יווצרו כאן דינמית -->
-                        </div>
-                    </div>
-                </section>
-
-                <section class="space-y-4 pt-4 border-t border-slate-100">
-                    <h3 class="text-sm font-black text-slate-950 flex items-center gap-2">
-                        <i class="fa-solid fa-comments wolt-text-cyan"></i>
-                        <span>חוות דעת של מבקרים</span>
-                    </h3>
-                    <div id="modalReviewsContainer" class="flex flex-col gap-4"></div>
-                </section>
-
-                <section class="pt-4 border-t border-slate-100">
-                    <h3 class="text-sm font-black text-slate-950 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-map-location-dot wolt-text-cyan"></i>
-                        <span>מיקום המסעדה במפה</span>
-                    </h3>
-                    <div id="modalSpecificMap" class="w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-sm border border-slate-200 z-10 relative bg-slate-100 flex items-center justify-center">
-                        <div id="modalMapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center z-20">
-                            <div class="absolute inset-0 bg-white/70 backdrop-blur-sm"></div>
-                            <div class="relative z-30 flex flex-col items-center p-4 text-center">
-                                <button onclick="window.activateModalMap()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2 px-5 rounded-2xl shadow-[0_4px_14px_rgba(0,194,232,0.25)] transition-transform active:scale-95 flex items-center gap-2 text-xs">
-                                    <i class="fa-solid fa-map"></i>
-                                    <span>הצג מפה אינטראקטיבית</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="pt-4 border-t border-slate-100">
-                    <h3 class="text-sm font-black text-slate-950 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-utensils wolt-text-cyan"></i>
-                        <span>עוד מסעדות באזור עבורך</span>
-                    </h3>
-                    <div id="relatedPlacesContainer" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth"></div>
-                </section>
-
             </div>
-        </article>
-
-        <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-3 z-[200] shadow-[0_-10px_30px_rgba(0,0,0,0.08)] md:hidden">
-            <a id="modalWazeBtn" href="#" target="_blank" class="flex-1 bg-[#00c2e8] hover:bg-[#00adc0] text-white text-sm sm:text-base font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(0,194,232,0.25)] active:scale-95 transition-all">
-                <i class="fa-brands fa-waze text-lg sm:text-xl"></i>
-                <span>ניווט ב-Waze</span>
-            </a>
-            <a id="modalMapsBtn" href="#" target="_blank" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-sm sm:text-base font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(16,185,129,0.25)] active:scale-95 transition-all">
-                <i class="fa-solid fa-map-location-dot text-lg sm:text-xl"></i>
-                <span>גוגל מפות</span>
-            </a>
+            
+            <div class="card-info">
+                <div class="card-title">סוויטה מול הנוף</div>
+                <div class="card-price">החל מ-₪850 ללילה</div>
+            </div>
         </div>
 
-        <!-- תצוגת תפריט פנימית -->
-        <div id="menuViewerModal" class="fixed inset-0 z-[160] bg-slate-900/60 backdrop-blur-sm hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target === this) window.closeMenuViewer()">
-            <div class="bg-white w-full h-[85vh] rounded-t-3xl shadow-2xl flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 mx-auto max-w-4xl" id="menuViewerSheet">
-                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-10 shadow-sm">
-                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-book-open text-brand-500"></i>
-                        <span>תפריט - <span id="menuViewerTitle"></span></span>
-                    </h2>
-                    <button onclick="window.closeMenuViewer()" class="text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
+        <div class="card">
+            <div class="gallery-container" 
+                 data-images="https://picsum.photos/id/1043/600/400,https://picsum.photos/id/1044/600/400,https://picsum.photos/id/1045/600/400,https://picsum.photos/id/1048/600/400,https://picsum.photos/id/1049/600/400">
+                <img src="https://picsum.photos/id/1043/600/400" alt="תמונת המקום" class="dynamic-image">
+                
+                <div class="gallery-counter">
+                    תמונה <span class="current-img">1</span> מתוך <span class="total-imgs">5</span>
                 </div>
-                <div id="menuViewerContent" class="flex-1 overflow-y-auto bg-slate-50 p-4 flex flex-col gap-4">
+                
+                <div class="progress-bar-container">
+                    <div class="progress-fill"></div>
                 </div>
+            </div>
+            
+            <div class="card-info">
+                <div class="card-title">בקתת עץ קלאסית</div>
+                <div class="card-price">החל מ-₪600 ללילה</div>
             </div>
         </div>
 
     </div>
 
-    <!-- פאנל מועדפים -->
-    <div id="favoritesPanel" class="fixed inset-0 z-[120] overflow-hidden hidden">
-        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="window.toggleFavoritesPanel(false)"></div>
-        <div class="absolute inset-y-0 left-0 max-w-full flex pr-10" onclick="if(event.target === this) window.toggleFavoritesPanel(false)">
-            <div class="w-full max-w-md bg-white shadow-2xl flex flex-col h-full relative">
-                <div class="p-6 border-b border-slate-150 flex items-center justify-between shrink-0 bg-brand-500 text-white">
-                    <h2 class="text-lg font-black flex items-center gap-2 text-white">
-                        <i class="fa-solid fa-heart text-white"></i> המועדפים שלי
-                    </h2>
-                    <button onclick="window.toggleFavoritesPanel(false)" class="text-slate-100 hover:text-white p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar bg-[#f5f7fa]" id="favoritesListContainer"></div>
-                <div class="p-4 border-t border-slate-150 bg-white shrink-0 flex gap-2">
-                    <button onclick="window.showFavoritesOnMap()" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-map-location-dot"></i> הצג במפה
-                    </button>
-                    <button onclick="window.toggleFavoritesPanel(false)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition-colors">
-                        סגירת רשימה
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- פופאפ תנאי שימוש / פרטיות -->
-    <div id="legalModalWrapper" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-slate-900/50 backdrop-blur-sm" onclick="if(event.target === this) window.closeLegalModal()">
-        <div class="bg-white w-full max-w-3xl max-h-full rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
-                <h2 id="legalModalTitle" class="text-lg font-black text-slate-900 flex items-center gap-2"></h2>
-                <button onclick="window.closeLegalModal()" class="text-slate-400 hover:text-slate-700 bg-white hover:bg-slate-200 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <div id="legalModalContent" class="p-6 overflow-y-auto text-sm text-slate-700 space-y-4 leading-relaxed"></div>
-        </div>
-    </div>
-
-    <!-- ======== קוד JS המלא ======== -->
     <script>
-        const STEIN_API_URL = encodeURI("https://api.steinhq.com/v1/storages/6a1b6b4692b1163e97fee042/רשימת מסעדות לסקריפט");
-        let placesDatabase = [];
-        let favorites = [];
-        let featuredWeeklyPlaceId = null; 
-        let currentModalPlaceId = null;
-        let isNavigating = false;
-        let isShowingFavoritesOnly = false; 
-        let isGoogleMapsLoaded = false;
-        let googleMapsPromise = null;
-        let hasPromptedLocation = false;
-        let userCoords = null;
-        let isGeoActive = false;
-        let activeCategory = 'all';
-        let activeCity = 'all';
-        let searchKeyword = '';
-        let filters = { mehadrinOnly: false, openNow: false, meatOnly: false, dairyOnly: false };
-        let desktopMapInstance, mobileMapInstance, detailModalMapInstance, detailModalMarker;
-        let desktopMarkers = [], mobileMarkers = [];
-        let categoriesList = ['all', 'עגלת קפה', 'מסעדה', 'בית קפה'];
-        
-        let feedPosts = [];
-        let feedVideoObserver = null;
-        window.globalFeedMuted = true; // התחלה שקטה לפיד כדי לאפשר Autoplay
+        document.addEventListener('DOMContentLoaded', () => {
+            const galleries = document.querySelectorAll('.gallery-container');
 
-        /* ========== פונקציות עזר קטנות ========== */
-        window.getAutoPrice = function(category, description) {
-            const cheap = ["עגלת קפה", "מאפייה", "פלאפל", "חומוס", "פיצה", "גלידה"];
-            const expensive = ["מסעדת בשרים", "שף", "פיין דיינינג", "בשרים"];
-            const catLower = (category || "").toLowerCase(); const descLower = (description || "").toLowerCase();
-            if (cheap.some(c => catLower.includes(c))) return { level: 1, text: "₪", label: "זול" };
-            if (expensive.some(c => catLower.includes(c) || descLower.includes(c))) return { level: 3, text: "₪₪₪", label: "יקר" };
-            return { level: 2, text: "₪₪", label: "בינוני" };
-        };
-        window.getTags = function(place) {
-            const tags = [];
-            const textToSearch = ((place.description || "") + " " + (place.reviews || "")).toLowerCase();
-            if (textToSearch.includes("ילדים") || textToSearch.includes("משפחה")) tags.push({ icon: "👨‍👩‍👧‍👦", text: "מתאים למשפחות", color: "bg-blue-50 text-blue-700 border-blue-200" });
-            if (textToSearch.includes("דייט") || textToSearch.includes("רומנטי")) tags.push({ icon: "🍷", text: "אווירה רומנטית", color: "bg-purple-50 text-purple-700 border-purple-200" });
-            if (textToSearch.includes("מהיר") || textToSearch.includes("רחוב")) tags.push({ icon: "🍔", text: "אוכל מהיר", color: "bg-orange-50 text-orange-700 border-orange-200" });
-            if (textToSearch.includes("חניה")) tags.push({ icon: "🚗", text: "חניה באזור", color: "bg-slate-100 text-slate-700 border-slate-200" });
-            if (textToSearch.includes("נגיש") || textToSearch.includes("נכים")) tags.push({ icon: "♿", text: "נגיש", color: "bg-emerald-50 text-emerald-700 border-emerald-200" });
-            return tags;
-        };
-        window.generateSlug = function(name) { return name.trim().replace(/\s+/g, '-').replace(/[^\wא-ת-]/g, '').replace(/-+/g, '-'); };
-        window.detectCityFromAddress = function(address) { if (!address) return 'מרכז'; return 'מרכז'; };
-        window.cleanAddress = function(a) { if(!a) return ''; return a.replace('ישראל','').trim(); };
-        window.optimizeImgSize = function(url) { return url; };
-        window.dailyShuffle = function(arr) { return arr.sort(() => Math.random() - 0.5); };
-        window.getOpenStatus = function() { return {isOpen: true, text: "פתוח (משוער)"}; };
-        window.calculateDistance = function(lat1, lon1, lat2, lon2) {
-            const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-        };
-        window.showToast = function(message, type = "success") {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            let bgClass = type === "error" ? "bg-rose-600 text-white" : "bg-[#00c2e8] text-white";
-            toast.className = `${bgClass} flex items-center gap-3 py-3 px-5 rounded-2xl shadow-lg font-bold text-xs md:text-sm animate-slide-up pointer-events-auto transition-all`;
-            toast.innerHTML = `<span class="flex-1 text-right">${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
-        };
-
-        // המרה לקישור וידאו ישיר וחוקי לנגן
-        function sanitizeVideoUrl(vUrl) {
-            if (!vUrl) return '';
-            let cleanUrl = vUrl.trim();
-            if (cleanUrl.includes('player.cloudinary.com/embed/')) {
-                try {
-                    const urlObj = new URL(cleanUrl);
-                    const cloudName = urlObj.searchParams.get('cloud_name');
-                    const publicId = urlObj.searchParams.get('public_id');
-                    if (cloudName && publicId) {
-                        const encodedId = encodeURIComponent(publicId).replace(/%2F/g, '/');
-                        cleanUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${encodedId}.mp4`;
-                    }
-                } catch(e) {}
-            } 
-            else if (cleanUrl.includes('drive.google.com/file/d/')) {
-                const match = cleanUrl.match(/file\/d\/([a-zA-Z0-9_-]+)/);
-                if (match) cleanUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
-            }
-            if(cleanUrl.includes('<iframe') || cleanUrl.includes('<script')) return '';
-            return cleanUrl;
-        }
-
-        /* ========== פונקציה ראשית שמביאה נתונים מהשרת ========== */
-        window.fetchPlaces = async function() {
-            try {
-                const response = await fetch(STEIN_API_URL);
-                if (!response.ok) throw new Error("API error");
-                const data = await response.json();
+            galleries.forEach(container => {
+                const imgElement = container.querySelector('.dynamic-image');
+                const currentSpan = container.querySelector('.current-img');
+                const totalSpan = container.querySelector('.total-imgs');
+                const progressFill = container.querySelector('.progress-fill');
                 
-                placesDatabase = data.map((item, index) => {
-                    const placeCity = item.city || window.detectCityFromAddress(item.address) || 'מרכז';
-                    let rawCity = item.city ? item.city.trim() : '';
-                    if (!rawCity && item.address) {
-                        const parts = item.address.split(',');
-                        rawCity = parts[parts.length - 1].replace(/\b\d{5,7}\b/g, '').replace(/ישראל/g, '').trim();
-                    }
+                const imagesString = container.getAttribute('data-images');
+                if (!imagesString) return;
+                
+                const imageArray = imagesString.split(',');
+                const totalImages = imageArray.length;
+                
+                totalSpan.textContent = totalImages;
+
+                // אתחול הסרגל לתמונה הראשונה בעת טעינת הדף
+                progressFill.style.width = `${(1 / totalImages) * 100}%`;
+
+                imageArray.forEach(src => {
+                    const img = new Image();
+                    img.src = src;
+                });
+
+                // פונקציה משותפת שמטפלת גם בעכבר וגם במגע
+                const handleInteraction = (e) => {
+                    // קבלת המיקום: אם זה אירוע מגע ניקח את האצבע הראשונה, אחרת את העכבר
+                    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                     
-                    const rawVideoUrl = item.video_url || item['קישור לוידאו'] || '';
-                    const rawInstaLink = item.insta_link || item['קישור לאינסטגרם'] || '';
-                    const videos = rawVideoUrl.split(',').map(u => sanitizeVideoUrl(u)).filter(u => u !== '');
-                    const instas = rawInstaLink.split(',').map(u => u.trim()).filter(u => u !== '');
+                    const rect = container.getBoundingClientRect();
+                    let relativeX = (clientX - rect.left) / rect.width;
+                    
+                    // התאמה ל-RTL (ככל שזזים שמאלה מתקדמים בתמונות)
+                    relativeX = 1 - relativeX;
 
-                    return {
-                        id: String(item.place_id || `place-${index}`),
-                        google_place_id: item.place_id || '',
-                        name: item.name || 'מסעדה כשרה',
-                        slug: window.generateSlug(item.name || 'מסעדה כשרה'),
-                        address: window.cleanAddress(item.address || 'ישראל'),
-                        city: placeCity,
-                        original_city: rawCity,
-                        category: (item.category || 'מסעדה').trim(),
-                        phone: item.phone || '',
-                        description: item.description || '',
-                        hours: item.hours || "",
-                        rating: parseFloat(item.rating) || 4.5,
-                        user_ratings_total: parseInt(item.user_ratings_total) || 10,
-                        milk_meat: item['Milk / Meat'] || 'כשר',
-                        kosher: (item.kosher && item.kosher.trim() !== '') ? item.kosher.trim() : 'כשר רבנות',
-                        reviews: item.reviews || '',
-                        coords: { lat: 32.0, lng: 34.0 }, 
-                        menu_images: item.menu_images ? item.menu_images.split(',').map(url => url.trim()).filter(u => u) : [],
-                        menu_link: item.menu_link || '',
-                        video_urls: videos,
-                        insta_links: instas,
-                        feed_text: item.feed_text || item['טקסט לפיד'] || '',
-                        image: window.optimizeImgSize(item.image) || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
-                        gallery: [item.image, item.image2, item.image3, item.image4, item.image5].filter(u => u && u.trim() !== '')
-                    };
-                });
+                    let imageIndex = Math.floor(relativeX * totalImages);
+                    imageIndex = Math.max(0, Math.min(imageIndex, totalImages - 1));
 
-                // בניית מערך הפיד - כל סרטון של כל מסעדה הופך לפוסט
-                feedPosts = [];
-                placesDatabase.forEach(place => {
-                    if (place.video_urls.length > 0) {
-                        const postText = place.feed_text || place.description || 'צפו בסרטון המגרה הזה!';
-                        place.video_urls.forEach((vidUrl, index) => {
-                            feedPosts.push({
-                                placeId: place.id,
-                                restaurantName: place.name,
-                                restaurantCity: place.city,
-                                restaurantCategory: place.category,
-                                avatar: place.image,
-                                slug: place.slug,
-                                videoUrl: vidUrl,
-                                instaLink: place.insta_links[index] || place.insta_links[0] || '#',
-                                text: postText
-                            });
-                        });
+                    if (imgElement.src !== imageArray[imageIndex]) {
+                        imgElement.src = imageArray[imageIndex];
+                        currentSpan.textContent = imageIndex + 1;
+                        
+                        // עדכון רוחב הסרגל באחוזים
+                        progressFill.style.width = `${((imageIndex + 1) / totalImages) * 100}%`;
                     }
-                });
-                
-                // ערבוב הפיד שיהיה מעניין
-                feedPosts = window.dailyShuffle(feedPosts);
-
-                const dynamicCategories = [...new Set(placesDatabase.map(p => p.category))].filter(Boolean);
-                categoriesList = ['all', ...dynamicCategories];
-                
-                window.renderCategoryCarousel();
-                window.sanitizeAndFixRegions();
-                window.sanitizeFavorites();
-                window.renderPlaces();
-                
-            } catch (error) {
-                console.error("שגיאה בטעינת נתונים:", error);
-            }
-        };
-
-        /* ========== ניווט בין הפיד לדף הבית ========== */
-        window.switchMainTab = function(tabName) {
-            const homeView = document.getElementById('homeViewContainer');
-            const feedView = document.getElementById('feedViewContainer');
-            const dFeedBtn = document.getElementById('desktopFeedBtn');
-
-            document.querySelectorAll('#tab-search, #tab-feed, #tab-map').forEach(btn => {
-                if(btn) { btn.classList.remove('text-brand-500'); btn.classList.add('text-slate-400'); }
-            });
-
-            if (tabName === 'home') {
-                homeView.style.display = 'block';
-                feedView.style.display = 'none';
-                const sBtn = document.getElementById('tab-search');
-                if(sBtn) sBtn.classList.add('text-brand-500');
-                if (dFeedBtn) dFeedBtn.classList.remove('bg-brand-50', 'text-brand-600');
-                window.pauseAllFeedVideos(); 
-                window.scrollTo({top: 0});
-            } 
-            else if (tabName === 'feed') {
-                homeView.style.display = 'none';
-                feedView.style.display = 'flex';
-                const fBtn = document.getElementById('tab-feed');
-                if(fBtn) fBtn.classList.add('text-brand-500');
-                if (dFeedBtn) dFeedBtn.classList.add('bg-brand-50', 'text-brand-600');
-                window.renderFeedView();
-                window.scrollTo({top: 0});
-            }
-        };
-
-        window.switchMobileTab = function(tab) {
-            if(tab === 'map') {
-                window.showToast("מפה", "success");
-            } else {
-                window.switchMainTab(tab);
-            }
-        };
-
-        window.handleLogoClick = function() {
-            window.switchMainTab('home');
-            window.resetFilters();
-        };
-
-        /* ========== רינדור המסעדות על המסך ב"דף הבית" ========== */
-        window.renderPlaces = function() {
-            const grid = document.getElementById('placesGrid');
-            const counter = document.getElementById('resultsCounter');
-            const noResults = document.getElementById('noResultsState');
-            if(!grid) return;
-            
-            grid.innerHTML = '';
-
-            let filtered = placesDatabase.filter(place => {
-                if (activeCategory !== 'all' && place.category !== activeCategory) return false;
-                if (activeCity !== 'all' && place.city !== activeCity) return false;
-                if (searchKeyword) {
-                    const searchLower = searchKeyword.toLowerCase();
-                    if (!place.name.toLowerCase().includes(searchLower) && !place.city.toLowerCase().includes(searchLower)) return false;
-                }
-                if (filters.meatOnly && !place.milk_meat.includes('בשרי')) return false;
-                if (filters.dairyOnly && !place.milk_meat.includes('חלבי')) return false;
-                return true;
-            });
-
-            counter.innerText = `${filtered.length} מסעדות`;
-
-            if (filtered.length === 0) {
-                noResults.classList.remove('hidden');
-                return;
-            }
-            noResults.classList.add('hidden');
-
-            filtered.forEach(place => {
-                const isFav = favorites.includes(String(place.id));
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md border border-slate-100 flex flex-col transition-all cursor-pointer relative group";
-                
-                card.onclick = (e) => {
-                    if (e.target.closest('button')) return;
-                    window.openPlaceDetails(place.id);
                 };
 
-                card.innerHTML = `
-                    <div class="h-44 w-full bg-slate-100 relative overflow-hidden">
-                        <img src="${place.image}" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
-                        <div class="absolute top-3 right-3 z-15">
-                            <button onclick="window.toggleFavorite('${place.id}', event)" class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-rose-500 shadow">
-                                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart text-base fav-icon-grid" data-place-id="${place.id}"></i>
-                            </button>
-                        </div>
-                        ${place.video_urls.length > 0 ? `<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 text-white text-[10px] font-bold"><i class="fa-solid fa-play"></i> וידאו</div>` : ''}
-                        <span class="absolute bottom-3 right-3 bg-brand-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow">${place.category}</span>
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between text-right space-y-3">
-                        <h3 class="font-extrabold text-slate-900 text-base leading-snug line-clamp-1 mb-1">${place.name}</h3>
-                        <p class="text-[11px] text-slate-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-map-pin text-rose-500 text-[10px]"></i><span class="truncate">${place.address}</span></p>
-                        <div class="flex flex-wrap gap-1 mt-2">
-                            <span class="text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-lg">${place.kosher}</span>
-                            <span class="text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-lg">${place.milk_meat}</span>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        };
+                // האזנה לאירועי עכבר (מחשב)
+                container.addEventListener('mousemove', handleInteraction);
+                
+                // האזנה לאירועי מגע (מובייל)
+                container.addEventListener('touchmove', handleInteraction, { passive: true });
 
-        /* ========== לוגיקת הפיד (Reels) ========== */
-        window.renderFeedView = function() {
-            const container = document.getElementById('feedListContainer');
-            const loader = document.getElementById('feedLoader');
-            loader.style.display = 'none';
-            container.classList.remove('hidden');
-
-            if(feedPosts.length === 0) {
-                container.innerHTML = `<div class="text-center py-20"><i class="fa-solid fa-video-slash text-5xl text-slate-300 mb-4"></i><h2 class="text-xl font-bold text-slate-700">אין סרטונים כרגע בפיד</h2></div>`;
-                return;
-            }
-
-            let html = '';
-            feedPosts.forEach((post, idx) => {
-                const instaBtn = (post.instaLink && post.instaLink !== '#') 
-                    ? `<a href="${post.instaLink}" target="_blank" class="text-[#E1306C] bg-rose-50 hover:bg-rose-100 transition-colors px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-rose-100 z-10"><i class="fa-brands fa-instagram text-sm"></i> צפה בפוסט המקורי</a>` 
-                    : '';
-
-                html += `
-                    <article class="bg-white sm:rounded-3xl sm:shadow-md border-y sm:border border-slate-200 overflow-hidden flex flex-col">
-                        <div class="p-3.5 flex items-center justify-between bg-white z-10">
-                            <div class="flex items-center gap-3">
-                                <img src="${post.avatar}" class="w-10 h-10 rounded-full object-cover border border-slate-200">
-                                <div class="flex flex-col text-right">
-                                    <span class="font-extrabold text-slate-900 text-sm">${post.restaurantName}</span>
-                                    <span class="text-[11px] font-medium text-slate-500"><i class="fa-solid fa-map-pin text-rose-500"></i> ${post.restaurantCity} • ${post.restaurantCategory}</span>
-                                </div>
-                            </div>
-                            <button onclick="window.openPlaceDetails('${post.placeId}')" class="text-white bg-brand-500 hover:bg-brand-600 px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-sm transition-transform active:scale-95">מידע</button>
-                        </div>
-                        <div class="feed-video-wrapper group cursor-pointer" onclick="window.toggleFeedVideoPlay(this)">
-                            <video class="feed-video w-full h-full object-cover" src="${post.videoUrl}" loop muted playsinline preload="metadata"></video>
-                            <button onclick="window.toggleFeedMute(event)" class="feed-mute-btn absolute bottom-4 right-4 w-9 h-9 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md z-20 transition-transform hover:scale-110">
-                                <i class="fa-solid ${window.globalFeedMuted ? 'fa-volume-xmark' : 'fa-volume-high'} text-sm"></i>
-                            </button>
-                            <div class="feed-play-icon absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 pointer-events-none">
-                                <div class="w-16 h-16 rounded-full bg-black/40 flex items-center justify-center text-white"><i class="fa-solid fa-play text-2xl ml-1"></i></div>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-white">
-                            <p class="text-sm text-slate-800 font-medium line-clamp-3"><span class="font-black">${post.restaurantName}</span> ${post.text}</p>
-                            <div class="mt-4 flex gap-2">${instaBtn}</div>
-                        </div>
-                    </article>
-                `;
-            });
-
-            container.innerHTML = html;
-            window.setupFeedIntersectionObserver();
-        };
-
-        window.toggleFeedVideoPlay = function(container) {
-            const video = container.querySelector('video');
-            const playIcon = container.querySelector('.feed-play-icon');
-            if (video.paused) { video.play().catch(e=>{}); playIcon.classList.add('opacity-0'); } 
-            else { video.pause(); playIcon.classList.remove('opacity-0'); }
-        };
-
-        window.toggleFeedMute = function(e) {
-            if(e) { e.preventDefault(); e.stopPropagation(); }
-            window.globalFeedMuted = !window.globalFeedMuted;
-            document.querySelectorAll('.feed-video').forEach(vid => vid.muted = window.globalFeedMuted);
-            document.querySelectorAll('.feed-mute-btn i').forEach(icon => {
-                icon.className = window.globalFeedMuted ? 'fa-solid fa-volume-xmark text-sm' : 'fa-solid fa-volume-high text-sm';
-            });
-        };
-
-        window.setupFeedIntersectionObserver = function() {
-            if (feedVideoObserver) feedVideoObserver.disconnect();
-            const videos = document.querySelectorAll('.feed-video');
-            feedVideoObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target;
-                    const playIcon = video.closest('.group').querySelector('.feed-play-icon');
-                    if (entry.isIntersecting) {
-                        video.muted = window.globalFeedMuted;
-                        const p = video.play();
-                        if (p !== undefined) p.then(() => playIcon.classList.add('opacity-0')).catch(e => playIcon.classList.remove('opacity-0'));
-                    } else {
-                        video.pause(); playIcon.classList.remove('opacity-0');
-                    }
+                // חזרה לתמונה הראשונה כשהעכבר יוצא (אופציונלי - עובד רק במחשב)
+                container.addEventListener('mouseleave', () => {
+                    imgElement.src = imageArray[0];
+                    currentSpan.textContent = 1;
+                    progressFill.style.width = `${(1 / totalImages) * 100}%`;
                 });
-            }, { threshold: 0.6 });
-            videos.forEach(v => feedVideoObserver.observe(v));
-        };
-
-        window.pauseAllFeedVideos = function() {
-            document.querySelectorAll('.feed-video').forEach(v => {
-                v.pause();
-                const container = v.closest('.group');
-                if(container) container.querySelector('.feed-play-icon').classList.remove('opacity-0');
             });
-        };
-
-        /* ========== פתיחת מודל מסעדה עם קרוסלת הרילס המרוכזת ========== */
-        window.openPlaceDetails = function(id) {
-            const place = placesDatabase.find(p => p.id === id);
-            if (!place) return;
-            currentModalPlaceId = id;
-            
-            document.getElementById('modalName').innerText = place.name;
-            document.getElementById('modalAddressDisplay').innerText = place.address;
-            document.getElementById('gridCategory').innerText = place.category;
-            document.getElementById('gridKosherType').innerText = place.kosher;
-            document.getElementById('modalMainImage').src = place.image;
-            document.getElementById('modalPhoneTextLink').innerText = place.phone;
-            document.getElementById('modalPhoneTextLink').href = "tel:" + place.phone;
-            
-            // עיבוד אזור הסרטונים בפופאפ מסעדה
-            const reelsSection = document.getElementById('modalReelsSection');
-            const reelsContainer = document.getElementById('modalReelsContainer');
-
-            if (reelsSection && reelsContainer) {
-                reelsContainer.innerHTML = ''; 
-                if (window.currentModalVideos) {
-                    window.currentModalVideos.forEach(v => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){} });
-                }
-                window.currentModalVideos = [];
-                
-                const vUrls = place.video_urls || [];
-                const iLinks = place.insta_links || [];
-
-                if (vUrls.length > 0) {
-                    reelsSection.classList.remove('hidden');
-                    vUrls.forEach((vUrl, index) => {
-                        const iLink = iLinks[index] || iLinks[0] || '#'; 
-                        
-                        const itemDiv = document.createElement('div');
-                        itemDiv.className = "shrink-0 w-44 sm:w-52 rounded-2xl overflow-hidden shadow-sm border border-slate-200 relative bg-black aspect-[9/16] snap-center group";
-                        
-                        const videoEl = document.createElement('video');
-                        videoEl.className = "absolute inset-0 w-full h-full object-cover cursor-pointer";
-                        videoEl.loop = true;
-                        videoEl.muted = true; // חובה השתקה להתחלה כדי שהדפדפן ירשה
-                        videoEl.playsInline = true;
-                        videoEl.setAttribute('playsinline', 'true');
-                        videoEl.src = vUrl;
-                        
-                        const soundBtn = document.createElement('button');
-                        soundBtn.className = "absolute bottom-3 right-3 w-8 h-8 bg-black/60 text-white rounded-full flex items-center justify-center z-20 backdrop-blur-md transition-transform hover:scale-110";
-                        soundBtn.innerHTML = '<i class="fa-solid fa-volume-xmark text-xs"></i>';
-                        soundBtn.onclick = function(e) {
-                            e.stopPropagation();
-                            videoEl.muted = !videoEl.muted;
-                            soundBtn.innerHTML = videoEl.muted ? '<i class="fa-solid fa-volume-xmark text-xs"></i>' : '<i class="fa-solid fa-volume-high text-xs"></i>';
-                        };
-
-                        const instaBtn = document.createElement('a');
-                        instaBtn.href = iLink;
-                        instaBtn.target = "_blank";
-                        instaBtn.className = "absolute top-3 left-3 w-8 h-8 bg-white/90 hover:bg-white text-[#E1306C] rounded-full flex items-center justify-center z-20 shadow-md transition-transform hover:scale-110";
-                        instaBtn.innerHTML = '<i class="fa-brands fa-instagram"></i>';
-
-                        videoEl.onclick = function() {
-                            if (videoEl.paused) { videoEl.play(); } else { videoEl.pause(); }
-                        };
-
-                        window.currentModalVideos.push(videoEl);
-                        itemDiv.appendChild(videoEl);
-                        itemDiv.appendChild(soundBtn);
-                        if(iLink !== '#') itemDiv.appendChild(instaBtn);
-                        
-                        reelsContainer.appendChild(itemDiv);
-                    });
-                } else {
-                    reelsSection.classList.add('hidden');
-                }
-            }
-
-            const container = document.getElementById('detailPageContainer');
-            container.classList.remove('hidden');
-            container.classList.add('flex');
-            container.scrollTo({ top: 0 }); 
-            document.body.classList.add('overflow-hidden');
-            
-            setTimeout(() => {
-                container.classList.remove('pointer-events-none', 'opacity-0');
-                if (window.currentModalVideos) {
-                    window.currentModalVideos.forEach(vid => {
-                        vid.play().catch(e => console.log("Play block", e));
-                    });
-                }
-            }, 50);
-        };
-
-        window.executeCloseModalUI = function() {
-            const container = document.getElementById('detailPageContainer');
-            if (container) {
-                container.classList.add('pointer-events-none', 'opacity-0');
-                if(document.getElementById('feedViewContainer').style.display !== 'flex') {
-                    document.body.classList.remove('overflow-hidden');
-                }
-                
-                if (window.currentModalVideos) {
-                    window.currentModalVideos.forEach(vid => { try{vid.pause();}catch(e){} });
-                }
-                setTimeout(() => {
-                    container.classList.add('hidden');
-                    container.classList.remove('flex');
-                }, 300);
-            }
-        };
-        
-        window.closeDetailsModal = function() { window.executeCloseModalUI(); };
-        window.handleSearch = function(v) { window.searchKeyword = v; window.renderPlaces(); };
-        window.clearSearch = function() { window.searchKeyword = ''; document.getElementById('desktopSearchInput').value = ''; window.renderPlaces(); };
-        window.resetFilters = function() { window.filters = { mehadrinOnly: false, openNow: false, meatOnly: false, dairyOnly: false }; window.renderPlaces(); };
-        window.toggleFilterChip = function(chip) { window.filters[chip] = !window.filters[chip]; window.renderPlaces(); };
-        
-        window.toggleFavorite = function(id, e) {
-            if(e) e.stopPropagation();
-            id = String(id);
-            const idx = favorites.indexOf(id);
-            if (idx === -1) { favorites.push(id); window.showToast("נוסף למועדפים"); } 
-            else { favorites.splice(idx, 1); window.showToast("הוסר ממועדפים"); }
-            window.renderPlaces();
-        };
-        
-        window.toggleFavoritesPanel = function(show) {
-            const panel = document.getElementById('favoritesPanel');
-            if(show) { panel.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
-            else { panel.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
-        };
-
-        // התחלה בסיום טעינה
-        document.addEventListener('DOMContentLoaded', () => {
-            window.fetchPlaces();
         });
-
     </script>
 </body>
 </html>
